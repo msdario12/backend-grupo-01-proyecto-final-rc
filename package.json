@@ -1,0 +1,22 @@
+{
+  "name": "backend-grupo-01-proyecto-final-rc",
+  "version": "1.0.0",
+  "description": "Backend del proyecto final del grupo 1 de RollingCode - Fullstack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msdario12/backend-grupo-01-proyecto-final-rc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/msdario12/backend-grupo-01-proyecto-final-rc/issues"
+  },
+  "homepage": "https://github.com/msdario12/backend-grupo-01-proyecto-final-rc#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
