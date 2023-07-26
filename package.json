@@ -4,6 +4,8 @@
   "description": "Backend del proyecto final del grupo 1 de RollingCode - Fullstack",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/app.js",
+    "start": "node src/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,5 +20,8 @@
   "homepage": "https://github.com/msdario12/backend-grupo-01-proyecto-final-rc#readme",
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
