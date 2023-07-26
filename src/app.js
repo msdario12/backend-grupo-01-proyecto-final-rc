@@ -1,4 +1,5 @@
 const express = require('express');
+const { router } = require('./routes/index.routes');
 // dot env
 require('dotenv').config();
 // puerto
@@ -12,6 +13,9 @@ app.get('/', (req, res) => {
 		message: 'Bienvenido al backend',
 	});
 });
+
+// rutas - api
+app.use('/api', router);
 
 app.listen(PORT, () => {
 	console.log(`Server on in http://localhost:${PORT}`);
