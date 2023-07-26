@@ -1,7 +1,10 @@
 const express = require('express');
-
+// dot env
+require('dotenv').config();
+// puerto
+const PORT = process.env.PORT;
 const app = express();
 
-app.listen(4000, () => {
-	console.log('Server on in http://localhost:4000');
+app.listen(PORT, () => {
+	console.log(`Server on in http://localhost:${PORT}`);
 });

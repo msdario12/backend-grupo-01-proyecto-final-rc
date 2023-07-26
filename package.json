@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/msdario12/backend-grupo-01-proyecto-final-rc#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2"
   },
   "devDependencies": {
