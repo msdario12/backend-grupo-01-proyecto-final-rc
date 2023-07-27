@@ -4,7 +4,8 @@ const { weatherAPI } = require('../api/weatherAPI');
 const getWeatherInfo = async (req, res) => {
 	try {
 		const config = {
-			q: '181.117.24.35',
+			q: 'San Miguel de Tucuman',
+			lang: 'es',
 		};
 		const response = await weatherAPI.get(`/current.json`, {
 			params: config,

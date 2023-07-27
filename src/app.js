@@ -1,10 +1,12 @@
 const express = require('express');
 const { router } = require('./routes/index.routes');
-// dot env
 require('dotenv').config();
 // puerto
 const PORT = process.env.PORT;
 const app = express();
+// middlewares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // ruta por defecto
 app.get('/', (req, res) => {
