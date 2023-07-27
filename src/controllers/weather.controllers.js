@@ -4,7 +4,7 @@ const { weatherAPI } = require('../api/weatherAPI');
 const getWeatherInfo = async (req, res) => {
 	try {
 		const config = {
-			q: '48.8567,2.3508',
+			q: '181.117.24.35',
 		};
 		const response = await weatherAPI.get(`/current.json`, {
 			params: config,
