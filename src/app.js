@@ -1,5 +1,6 @@
 const express = require('express');
 const { router } = require('./routes/index.routes');
+const { errorHandler } = require('./middlewares/error.middlewares');
 require('dotenv').config();
 // puerto
 const PORT = process.env.PORT;
@@ -18,6 +19,9 @@ app.get('/', (req, res) => {
 
 // rutas - api
 app.use('/api', router);
+
+// error handler
+app.use(errorHandler);
 
 app.listen(PORT, () => {
 	console.log(`Server on in http://localhost:${PORT}`);

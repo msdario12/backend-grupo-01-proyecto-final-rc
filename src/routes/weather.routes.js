@@ -3,6 +3,6 @@ const { getWeatherInfo } = require('../controllers/weather.controllers');
 
 const weatherRouter = Router();
 
-weatherRouter.get('/',getWeatherInfo)
+weatherRouter.get('/', getWeatherInfo);
 
 module.exports = { weatherRouter };

@@ -7,7 +7,6 @@ const weatherAPI = axios.create({
 
 	params: {
 		key: API_KEY,
-
 	},
 });
 
