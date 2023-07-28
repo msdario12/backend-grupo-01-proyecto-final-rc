@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const { router } = require('./routes/index.routes');
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/error.middlewares');
@@ -26,5 +27,9 @@ app.use('/api', router);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
+	mongoose
+		.connect(process.env.DB_CONNECT)
+		.then(() => console.log('Database connected'))
+		.catch((error) => console.log('Database error: ' + error));
 	console.log(`Server on in http://localhost:${PORT}`);
 });
