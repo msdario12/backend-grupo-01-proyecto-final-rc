@@ -33,6 +33,13 @@ const createNewPatient = async (req, res, next) => {
 		}
 		const newUser = await User.create({ firstName, lastName, email, phone });
 
+		const newPet = await Pet.create({
+			name,
+			specie,
+			race,
+			client_id: newUser._id,
+		});
+
 		newUser.pets.push(newPet._id);
 
 		await newUser.save();
