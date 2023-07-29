@@ -17,7 +17,7 @@ const petsSchema = Schema({
 	},
 	client_id: {
 		type: Types.ObjectId,
-		ref: users,
+		ref: 'users',
 		required: true,
 		_id: false,
 	},

@@ -21,12 +21,9 @@ const usersSchema = Schema({
 	},
 	pets: [
 		{
-			pet_id: {
-				type: Types.ObjectId,
-				ref: 'pets',
-				required: true,
-				_id: false,
-			},
+			type: Types.ObjectId,
+			ref: 'pets',
+			_id: false,
 		},
 	],
 });
