@@ -5,12 +5,7 @@ const { Patient } = require('../models/patients.models');
 const createNewPatient = async (req, res, next) => {
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = req.body;
-        const newPet = await Pet.create({
-			name,
-			specie,
-			race,
-			client_id: newUser._id,
-		});
+        
 		const foundedUser = await User.findOne({ email: email });
 		if (foundedUser) {
 			res.status(200).json({
@@ -20,7 +15,12 @@ const createNewPatient = async (req, res, next) => {
 			return;
 		}
 		const newUser = await User.create({ firstName, lastName, email, phone });
-		
+		const newPet = await Pet.create({
+			name,
+			specie,
+			race,
+			client_id: newUser._id,
+		});
 
 		newUser.pets.push(newPet._id);
 
