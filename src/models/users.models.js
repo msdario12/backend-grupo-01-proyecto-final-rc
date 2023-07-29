@@ -23,6 +23,7 @@ const usersSchema = Schema({
 		{
 			pet_id: {
 				type: Types.ObjectId,
+				ref: 'pets',
 				required: true,
 				_id: false,
 			},
@@ -30,6 +31,6 @@ const usersSchema = Schema({
 	],
 });
 
-const Users = model(collection, usersSchema);
+const User = model(collection, usersSchema);
 
-module.exports = { Users };
+module.exports = { User };
