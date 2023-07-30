@@ -23,6 +23,8 @@ app.get('/', (req, res) => {
 // rutas - api
 app.use('/api', router);
 
+app.use('/contact', require('./routes/contactRouter'));
+
 // error handler
 app.use(errorHandler);
 
