@@ -1,8 +1,14 @@
 const { Pet } = require('../models/pets.models');
 const { User } = require('../models/users.models');
 const { Patient } = require('../models/patients.models');
+const { validationResult } = require('express-validator');
 
 const createNewPatient = async (req, res, next) => {
+	let errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		console.log(errors.array());
+		return res.status(400).json({ errors: errors.array() });
+	}
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = req.body;
 		console.log(req.body);
