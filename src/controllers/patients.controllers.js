@@ -64,9 +64,27 @@ const getAllPatients = async (req, res, next) => {
 		const allPatients = await Patient.find()
 			.populate('user_id')
 			.populate('pet_id');
+
+		const formattedAllPatients = allPatients.map((patient, index) => {
+			const { _id } = patient;
+			const { firstName, lastName, email } = patient.user_id;
+			const { pet, race, specie, name } = patient.pet_id;
+			return {
+				_id,
+				index,
+				firstName,
+				lastName,
+				email,
+				name,
+				pet,
+				race,
+				specie,
+			};
+		});
+
 		res.status(200).json({
 			success: true,
-			data: allPatients,
+			data: formattedAllPatients,
 		});
 	} catch (error) {
 		next(error);
