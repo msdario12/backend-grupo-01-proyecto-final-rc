@@ -29,7 +29,7 @@ const newPatientValidator = () => {
 			.isEmpty()
 			.withMessage(el.title + ' es un campo obligatorio.')
 			.isString()
-			.withMessage(el.title + ' solo se aceptan letras.')
+			.withMessage(el.title + ' solo tipo string')
 			.isLength({ min: 3, max: 35 })
 			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
 			.matches(/^[a-zA-Z0-9]*$/)
@@ -57,6 +57,15 @@ const newPatientValidator = () => {
 			.isIn(validSpecies)
 			.withMessage('Tipo de mascota no soportado.')
 			.escape()
+	);
+	validatorList.push(
+		body('phone')
+			.trim()
+			.not()
+			.isEmpty()
+			.withMessage('Teléfono es un campo obligatorio.')
+			.matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/)
+			.withMessage('Teleéfono no válido.')
 	);
 	return validatorList;
 };
