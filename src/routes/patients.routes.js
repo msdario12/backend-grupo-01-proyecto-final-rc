@@ -33,7 +33,8 @@ const newPatientValidator = () => {
 			.isLength({ min: 3, max: 35 })
 			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
 			.matches(/^[a-zA-Z0-9]*$/)
-			.withMessage(el.title + 'solo acepta letras y números.')
+			.withMessage(el.title + ' solo acepta letras y números.')
+			.escape()
 	);
 	validatorList.push(
 		body('email')
@@ -44,6 +45,7 @@ const newPatientValidator = () => {
 			.withMessage('Email es un campo obligatorio.')
 			.isEmail()
 			.withMessage('Introduzca un email válido')
+			.escape()
 	);
 	validatorList.push(
 		body('specie')
@@ -53,6 +55,8 @@ const newPatientValidator = () => {
 			.withMessage('Especie es un campo obligatorio.')
 			.toLowerCase()
 			.isIn(validSpecies)
+			.withMessage('Tipo de mascota no soportado.')
+			.escape()
 	);
 	return validatorList;
 };
