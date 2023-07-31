@@ -14,19 +14,47 @@ const validSpecies = [
 ];
 
 const newPatientValidator = () => {
-	const inputNames = ['firstName', 'lastName', 'name', 'race', 'specie'];
+	const inputNames = [
+		{ title: 'Nombre', name: 'firstName' },
+		{ title: 'Apellido', name: 'lastName' },
+		{ title: 'Mascota', name: 'name' },
+		{ title: 'Raza', name: 'race' },
+	];
 
-	return inputNames.map((name) =>
-		body(name)
+	let validatorList = inputNames.map((el) =>
+		body(el.name)
+			.toLowerCase()
 			.trim()
 			.not()
 			.isEmpty()
-			.withMessage('Este campo es obligatorio')
+			.withMessage(el.title + ' es un campo obligatorio.')
 			.isString()
-			.withMessage('Solo se aceptan letras')
+			.withMessage(el.title + ' solo se aceptan letras.')
 			.isLength({ min: 3, max: 35 })
-			.withMessage('Debe ser mayor a 3 caracteres y menor que 35')
+			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
+			.matches(/^[a-zA-Z0-9]*$/)
+			.withMessage(el.title + 'solo acepta letras y números.')
 	);
+	validatorList.push(
+		body('email')
+			.toLowerCase()
+			.trim()
+			.not()
+			.isEmpty()
+			.withMessage('Email es un campo obligatorio.')
+			.isEmail()
+			.withMessage('Introduzca un email válido')
+	);
+	validatorList.push(
+		body('specie')
+			.trim()
+			.not()
+			.isEmpty()
+			.withMessage('Especie es un campo obligatorio.')
+			.toLowerCase()
+			.isIn(validSpecies)
+	);
+	return validatorList;
 };
 
 const {

@@ -1,7 +1,7 @@
 const { Pet } = require('../models/pets.models');
 const { User } = require('../models/users.models');
 const { Patient } = require('../models/patients.models');
-const { validationResult } = require('express-validator');
+const { validationResult, matchedData } = require('express-validator');
 
 const createNewPatient = async (req, res, next) => {
 	let errors = validationResult(req);
@@ -9,11 +9,25 @@ const createNewPatient = async (req, res, next) => {
 		console.log(errors.array());
 		return res.status(400).json({ errors: errors.array() });
 	}
+	// Trabajar con los datos saneados del express validator
+	const data = matchedData(req);
 	try {
-		const { firstName, lastName, email, phone, name, specie, race } = req.body;
-		console.log(req.body);
+		const { firstName, lastName, email, phone, name, specie, race } = data;
+		console.log(data);
 		const foundedUser = await User.findOne({ email: email });
+		const foundedPet = await Pet.findOne({ name: name, specie: specie });
+		if (foundedPet) {
+			// Se encuentra la misma mascota y usuario
+			res.status(200).json({
+				success: true,
+				message: 'La mascota ya se encuentra en el sistema.',
+			});
+			return;
+		}
 		if (foundedUser) {
+			//Existe usuario
+
+			// Creamos nueva mascota
 			const newPet = await Pet.create({
 				name,
 				specie,
@@ -37,6 +51,7 @@ const createNewPatient = async (req, res, next) => {
 			});
 			return;
 		}
+		// No existe el usuario
 		const newUser = await User.create({ firstName, lastName, email, phone });
 
 		const newPet = await Pet.create({
