@@ -59,4 +59,18 @@ const createNewPatient = async (req, res, next) => {
 	}
 };
 
-module.exports = { createNewPatient };
+const getAllPatients = async (req, res, next) => {
+	try {
+		const allPatients = await Patient.find()
+			.populate('user_id')
+			.populate('pet_id');
+		res.status(200).json({
+			success: true,
+			data: allPatients,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { createNewPatient, getAllPatients };

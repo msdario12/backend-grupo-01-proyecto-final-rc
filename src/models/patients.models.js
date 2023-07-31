@@ -1,5 +1,6 @@
 const { Schema, model, Types } = require('mongoose');
 
+
 const collection = 'patients';
 
 const patientsSchema = Schema({
