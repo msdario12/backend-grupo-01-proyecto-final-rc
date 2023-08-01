@@ -1,9 +1,9 @@
-const { Router } = require("express");
-const { getPetByID } = require("../controllers/pets.controllers");
+const { Router } = require('express');
+const { getPetByID, editPetByID } = require('../controllers/pets.controllers');
 
+const petsRouter = Router();
 
-const petsRouter = Router()
+petsRouter.get('/:id', getPetByID);
+petsRouter.put('/:id', editPetByID);
 
-petsRouter.get('/:id', getPetByID)
-
-module.exports = {petsRouter}
+module.exports = { petsRouter };

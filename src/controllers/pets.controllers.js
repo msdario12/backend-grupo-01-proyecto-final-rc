@@ -20,4 +20,25 @@ const getPetByID = async (req, res, next) => {
 	}
 };
 
-module.exports = { getPetByID };
+const editPetByID = async (req, res, next) => {
+	const { id } = req.params;
+
+	try {
+		const onePet = await Pet.findOneAndUpdate({ _id: id }, req.body, {
+			new: true,
+		});
+
+		if (!onePet) {
+			return res.status(200).json({
+				success: true,
+				message: 'Mascota no encontrada',
+			});
+		}
+
+		return res.status(200).json({ success: true, data: onePet });
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { getPetByID, editPetByID };
