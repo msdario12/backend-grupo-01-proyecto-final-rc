@@ -1,0 +1,69 @@
+const { User } = require('../models/users.models');
+
+const getUserByEmail = async (req, res, next) => {
+	try {
+		const { email } = req.query;
+		if (email) {
+			const users = await User.find({
+				email: { $regex: '^' + email, $options: 'i' },
+			});
+			if (users.length === 0) {
+				res.status(200).json({
+					success: true,
+					message: 'No se encontraron usuarios',
+				});
+				return;
+			}
+			res.status(200).json({
+				success: true,
+				data: users,
+			});
+			return;
+		}
+		const users = await User.find();
+
+		res.status(200).json({
+			success: true,
+			data: users,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const getUserByID = async (req, res, next) => {
+	const { id } = req.params;
+	try {
+		const user = await User.findById(id);
+
+		res.status(200).json({
+			success: true,
+			data: user,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+const editUserByID = async (req, res, next) => {
+	try {
+		const oneUser = await User.findOneAndUpdate(
+			{ _id: req.params.id },
+			req.body,
+			{ new: true }
+		);
+
+		if (!oneUser) {
+			return res.status(200).json({
+				success: true,
+				response: 'Usuario no encontrado',
+			});
+		}
+
+		return res.status(200).json({ success: true, data: oneUser });
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { getUserByEmail, editUserByID, getUserByID };

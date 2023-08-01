@@ -3,6 +3,23 @@ const { User } = require('../models/users.models');
 const { Patient } = require('../models/patients.models');
 const { validationResult, matchedData } = require('express-validator');
 
+const formatPatients = (list) =>
+	list.map((patient, index) => {
+		const { _id } = patient;
+		const { firstName, lastName, email } = patient.user_id;
+		const { race, specie, name } = patient.pet_id;
+		return {
+			_id,
+			index,
+			firstName,
+			lastName,
+			email,
+			name,
+			race,
+			specie,
+		};
+	});
+
 const createNewPatient = async (req, res, next) => {
 	let errors = validationResult(req);
 	if (!errors.isEmpty()) {
@@ -80,28 +97,35 @@ const createNewPatient = async (req, res, next) => {
 	}
 };
 
+const getPatientByID = async (req, res, next) => {
+	const { id } = req.params;
+	try {
+		const onePatient = await Patient.findOne({ _id: id });
+
+		if (!onePatient) {
+			res.json(200).json({
+				success: true,
+				message: 'Paciente no encontrado',
+			});
+			return;
+		}
+
+		res.status(200).json({
+			success: true,
+			data: onePatient,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
 const getAllPatients = async (req, res, next) => {
 	try {
 		const allPatients = await Patient.find()
 			.populate('user_id')
 			.populate('pet_id');
 
-		const formattedAllPatients = allPatients.map((patient, index) => {
-			const { _id } = patient;
-			const { firstName, lastName, email } = patient.user_id;
-			const { pet, race, specie, name } = patient.pet_id;
-			return {
-				_id,
-				index,
-				firstName,
-				lastName,
-				email,
-				name,
-				pet,
-				race,
-				specie,
-			};
-		});
+		const formattedAllPatients = formatPatients(allPatients);
 
 		res.status(200).json({
 			success: true,
@@ -112,4 +136,4 @@ const getAllPatients = async (req, res, next) => {
 	}
 };
 
-module.exports = { createNewPatient, getAllPatients };
+module.exports = { createNewPatient, getAllPatients, getPatientByID };

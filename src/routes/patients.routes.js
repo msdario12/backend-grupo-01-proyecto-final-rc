@@ -73,11 +73,13 @@ const newPatientValidator = () => {
 const {
 	createNewPatient,
 	getAllPatients,
+	getPatientByID,
 } = require('../controllers/patients.controllers');
 const { body } = require('express-validator');
 
 const patientsRouter = Router();
 patientsRouter.get('/', getAllPatients);
+patientsRouter.get('/:id', getPatientByID);
 patientsRouter.post('/', newPatientValidator(), createNewPatient);
 
 module.exports = {
