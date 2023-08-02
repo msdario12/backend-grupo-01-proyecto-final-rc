@@ -22,26 +22,10 @@ const patientsSchema = Schema({
 patientsSchema.post('findOneAndDelete', async (doc) => {
 	const user = await User.findOne({ _id: doc.user_id });
 	if (user.pets) {
-		const updatedUser = await User.findOneAndUpdate(
-			{
-				_id: doc.user_id,
-			},
-			{
-				$pull: {
-					pets: [{ _id: doc.pet_id }],
-				},
-			},
-			{
-				new: true,
-			}
-		);
-		console.log(updatedUser);
-		console.log(updatedUser.pets.length);
-		if (user.pets.length === 0) {
-			console.log('Se elimina usuario tambien');
-			await User.deleteOne({ _id: doc.user_id });
-			return;
-		}
+		user.pets.pull(doc.pet_id);
+		user.save();
+		console.log(user);
+		console.log(user.pets.length);
 		await Pet.deleteOne({ _id: doc.pet_id });
 	}
 });

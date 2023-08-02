@@ -112,7 +112,7 @@ const getPatientByID = async (req, res, next) => {
 		}
 
 		if (!onePatient) {
-			res.json(200).json({
+			res.status(200).json({
 				success: true,
 				message: 'Paciente no encontrado',
 			});
