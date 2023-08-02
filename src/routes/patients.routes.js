@@ -77,12 +77,13 @@ const {
 	deletePatientByID,
 } = require('../controllers/patients.controllers');
 const { body } = require('express-validator');
+const { authJwt, isAdmin } = require('../middlewares/authJwt.middlewares');
 
 const patientsRouter = Router();
-patientsRouter.get('/', getAllPatients);
+patientsRouter.get('/', authJwt, isAdmin, getAllPatients);
 patientsRouter.get('/:id', getPatientByID);
 patientsRouter.post('/', newPatientValidator(), createNewPatient);
-patientsRouter.delete('/:id',  deletePatientByID);
+patientsRouter.delete('/:id', deletePatientByID);
 
 module.exports = {
 	patientsRouter,
