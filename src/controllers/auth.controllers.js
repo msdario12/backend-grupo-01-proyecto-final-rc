@@ -13,9 +13,6 @@ const handleLogin = async (req, res, next) => {
 			});
 			return;
 		}
-        console.log(foundedUser.firstName)
-        console.log(foundedUser)
-		// Solo login de administradores
 		if (foundedUser.role !== 'admin') {
 			res.status(200).json({
 				success: true,
