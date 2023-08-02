@@ -74,6 +74,7 @@ const {
 	createNewPatient,
 	getAllPatients,
 	getPatientByID,
+	deletePatientByID,
 } = require('../controllers/patients.controllers');
 const { body } = require('express-validator');
 
@@ -81,6 +82,7 @@ const patientsRouter = Router();
 patientsRouter.get('/', getAllPatients);
 patientsRouter.get('/:id', getPatientByID);
 patientsRouter.post('/', newPatientValidator(), createNewPatient);
+patientsRouter.delete('/:id',  deletePatientByID);
 
 module.exports = {
 	patientsRouter,

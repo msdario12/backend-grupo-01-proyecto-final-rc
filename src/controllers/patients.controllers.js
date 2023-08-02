@@ -99,8 +99,17 @@ const createNewPatient = async (req, res, next) => {
 
 const getPatientByID = async (req, res, next) => {
 	const { id } = req.params;
+	const { populate } = req.query;
 	try {
-		const onePatient = await Patient.findOne({ _id: id });
+		let onePatient;
+		if (populate) {
+			console.log(populate);
+			onePatient = await Patient.findOne({ _id: id })
+				.populate('user_id')
+				.populate('pet_id');
+		} else {
+			onePatient = await Patient.findOne({ _id: id });
+		}
 
 		if (!onePatient) {
 			res.json(200).json({
@@ -136,4 +145,22 @@ const getAllPatients = async (req, res, next) => {
 	}
 };
 
-module.exports = { createNewPatient, getAllPatients, getPatientByID };
+const deletePatientByID = async (req, res, next) => {
+	const { id } = req.params;
+	try {
+		const deletedPatient = await Patient.findOneAndDelete({ _id: id });
+		res.status(200).json({
+			success: true,
+			data: deletedPatient,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = {
+	createNewPatient,
+	getAllPatients,
+	getPatientByID,
+	deletePatientByID,
+};
