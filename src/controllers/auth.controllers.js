@@ -1,4 +1,5 @@
 const { User } = require('../models/users.models');
+const jwt = require('jsonwebtoken');
 
 const handleLogin = async (req, res, next) => {
 	try {
@@ -13,6 +14,7 @@ const handleLogin = async (req, res, next) => {
 			});
 			return;
 		}
+		// Solo usuarios con rol de administrador pueden loguear
 		if (foundedUser.role !== 'admin') {
 			res.status(200).json({
 				success: true,
@@ -20,7 +22,7 @@ const handleLogin = async (req, res, next) => {
 			});
 			return;
 		}
-		// Falta agregar la comparacion con hash
+		// Falta agregar la comparación con hash
 		if (foundedUser.password !== password) {
 			res.status(200).json({
 				success: true,
@@ -28,10 +30,23 @@ const handleLogin = async (req, res, next) => {
 			});
 			return;
 		}
+		// Creamos el JWT
+		const accessToken = jwt.sign(
+			{
+				firstName: foundedUser.firstName,
+				email: foundedUser.email,
+				role: foundedUser.role,
+			},
+			process.env.ACCESS_TOKEN_SECRET,
+			{
+				expiresIn: '30s',
+			}
+		);
 
 		res.status(200).json({
 			success: true,
-			message: 'Login correcto, Bienvenido',
+			message: 'Autenticación correcta',
+			data: accessToken,
 		});
 	} catch (error) {
 		next(error);
