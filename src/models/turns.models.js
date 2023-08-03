@@ -22,6 +22,10 @@ const turnsSchema = Schema({
 		ref: 'pets',
 		_id: false,
 	},
+	status: {
+		type: String,
+		default: 'pending',
+	},
 });
 
 const Turn = model(collection, turnsSchema);
