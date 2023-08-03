@@ -1,6 +1,6 @@
 const { matchedData, validationResult } = require('express-validator');
-const { Pet } = require('../models/pets.models');
 const { Turn } = require('../models/turns.models');
+const { Patient } = require('../models/patients.models');
 
 const createTurn = async (req, res, next) => {
 	try {
@@ -12,17 +12,16 @@ const createTurn = async (req, res, next) => {
 		// Trabajar con los datos saneados del express validator
 		const turnData = matchedData(req);
 
-		const foundedPet = await Pet.findById(turnData.pet_id);
-
-		if (!foundedPet) {
-			res.status(200).json({
-				success: true,
-				message: 'Mascota no valida',
+		const patient = await Patient.findById(turnData.patient_id);
+		if (!patient) {
+			res.status(400).json({
+				success: false,
+				message: 'Paciente no encontrado',
 			});
 			return;
 		}
-		const userID = foundedPet.client_id;
-		const oneTurn = await Turn.create({ ...turnData, user_id: userID });
+
+		const oneTurn = await Turn.create(turnData);
 
 		res.status(201).json({
 			success: true,

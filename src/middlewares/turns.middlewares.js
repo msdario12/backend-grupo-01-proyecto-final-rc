@@ -52,13 +52,14 @@ const newTurnValidator = () => {
 	);
 
 	validatorList.push(
-		body('pet_id')
+		body('patient_id')
 			.trim()
 			.not()
 			.isEmpty()
-			.withMessage('pet_id es un campo obligatorio.')
+			.withMessage('patient_id es un campo obligatorio.')
 			.custom((value) => mongoose.isValidObjectId(value))
-			.withMessage('pet_id no es valido.')
+			.withMessage('patient_id no es valido.')
+
 	);
 
 	return validatorList;

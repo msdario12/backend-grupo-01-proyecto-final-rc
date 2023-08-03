@@ -17,21 +17,15 @@ const turnsSchema = Schema({
 		type: String,
 		required: true,
 	},
-	pet_id: {
+	patient_id: {
 		type: Types.ObjectId,
 		required: true,
-		ref: 'pets',
+		ref: 'patients',
 		_id: false,
 	},
 	status: {
 		type: String,
 		default: 'pending',
-	},
-	user_id: {
-		required: true,
-		type: Types.ObjectId,
-		ref: 'users',
-		_id: false,
 	},
 });
 
