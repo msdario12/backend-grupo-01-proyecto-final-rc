@@ -1,4 +1,5 @@
 const { Schema, Types, model } = require('mongoose');
+const { Pet } = require('./pets.models');
 
 const collection = 'turns';
 
@@ -25,6 +26,12 @@ const turnsSchema = Schema({
 	status: {
 		type: String,
 		default: 'pending',
+	},
+	user_id: {
+		required: true,
+		type: Types.ObjectId,
+		ref: 'users',
+		_id: false,
 	},
 });
 
