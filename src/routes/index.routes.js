@@ -4,6 +4,7 @@ const { patientsRouter } = require('./patients.routes');
 const { usersRouter } = require('./users.routes');
 const { petsRouter } = require('./pets.routes');
 const { authRouter } = require('./auth.routes');
+const { turnsRouter } = require('./turns.routes');
 
 // aca van todas las rutas para ser exportadas
 const router = Router();
@@ -14,5 +15,6 @@ router.use('/weather', weatherRouter);
 router.use('/patients', patientsRouter);
 router.use('/users', usersRouter);
 router.use('/pets', petsRouter);
+router.use('/turns', turnsRouter);
 // exportación
 module.exports = { router };

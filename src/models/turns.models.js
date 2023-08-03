@@ -6,7 +6,7 @@ const turnsSchema = Schema({
 	date: {
 		type: Date,
 		required: true,
-		min: new Date().toString,
+		min: new Date().toISOString(),
 	},
 	vet: {
 		type: String,
@@ -18,6 +18,7 @@ const turnsSchema = Schema({
 	},
 	pet_id: {
 		type: Types.ObjectId,
+		required: true,
 		ref: 'pets',
 		_id: false,
 	},
