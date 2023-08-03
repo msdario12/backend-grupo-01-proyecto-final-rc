@@ -15,6 +15,13 @@ const usersSchema = Schema({
 		type: String,
 		required: true,
 	},
+	password: {
+		type: String,
+	},
+	role: {
+		type: String,
+		default: 'client',
+	},
 	phone: {
 		type: Number,
 		required: true,
