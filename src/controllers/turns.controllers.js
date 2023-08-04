@@ -60,4 +60,17 @@ const createTurn = async (req, res, next) => {
 	}
 };
 
-module.exports = { createTurn, editTurn };
+const getAllTurns = async (req,res,next) => {
+	try {
+		const allTurns = await Turn.find()
+
+		return res.status(200).json({
+			success: true,
+			data: allTurns,
+		});
+	} catch (error) {
+		next(error)
+	}
+}
+
+module.exports = { createTurn, editTurn, getAllTurns };

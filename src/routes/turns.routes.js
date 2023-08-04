@@ -1,10 +1,15 @@
 const { Router } = require('express');
-const { createTurn, editTurn } = require('../controllers/turns.controllers');
+const {
+	createTurn,
+	editTurn,
+	getAllTurns,
+} = require('../controllers/turns.controllers');
 const { newTurnValidator } = require('../middlewares/turns.middlewares');
 
 const turnsRouter = Router();
 
+turnsRouter.get('/', getAllTurns);
 turnsRouter.post('/', newTurnValidator(), createTurn);
-turnsRouter.put('/:id', newTurnValidator(),editTurn);
+turnsRouter.put('/:id', newTurnValidator(), editTurn);
 
 module.exports = { turnsRouter };
