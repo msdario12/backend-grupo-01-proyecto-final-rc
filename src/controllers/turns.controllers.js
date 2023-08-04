@@ -2,6 +2,7 @@ const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
+const { socketIO } = require('../socketApi');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -56,12 +57,13 @@ const createTurn = async (req, res, next) => {
 		// En el front se debera setear el estado de inProgress cuando el paciente llegue.
 		const date = new Date(oneTurn.date);
 		// guardamos el job con el identificador igual al id del turno
-		const job = schedule.scheduleJob(oneTurn._id, date, function () {
+		const job = schedule.scheduleJob( date, function() {
 			try {
 				if (oneTurn.status === 'pending') {
 					oneTurn.status = 'waitingForPatient';
 					oneTurn.save();
 					console.log('Its time', oneTurn);
+					socketIO.emit('foo', 'Se actulizo el estado')
 					return;
 				}
 				console.log('El turno ya habia sido cambiado de estado');
