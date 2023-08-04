@@ -1,6 +1,7 @@
 const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
+const { Patient } = require('../models/patients.models');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -56,8 +57,12 @@ const createTurn = async (req, res, next) => {
 			oneTurn.save();
 			console.log('Its time', oneTurn);
 		});
-		console.log(date);
-
+		// guardamos el turno en el paciente
+		const onePatient = await Patient.findById(oneTurn.patient_id);
+		// el patient_id se valida en el middleware de express-validator
+		// podemos afirmar que si existe un onePatient con ese id
+		onePatient.turns.push(oneTurn._id);
+		onePatient.save();
 		return res.status(201).json({
 			success: true,
 			data: oneTurn,
