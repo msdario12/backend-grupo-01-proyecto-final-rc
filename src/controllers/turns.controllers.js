@@ -15,8 +15,6 @@ const editTurn = async (req, res, next) => {
 		// Trabajar con los datos saneados del express validator
 		const turnData = matchedData(req);
 
-		console.log(turnData);
-
 		const updatedTurn = await Turn.findOneAndUpdate({ _id: id }, turnData, {
 			new: true,
 		});
@@ -28,6 +26,11 @@ const editTurn = async (req, res, next) => {
 			});
 			return;
 		}
+		// Leemos el job existente para cambiar el estado
+		const existingJob = schedule.scheduledJobs[updatedTurn._id];
+		const newDate = new Date(updatedTurn.date);
+		// Cambiamos la fecha de dicho job
+		existingJob.reschedule(newDate);
 
 		return res.status(200).json({
 			success: true,
@@ -52,10 +55,15 @@ const createTurn = async (req, res, next) => {
 		// Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
 		// En el front se debera setear el estado de inProgress cuando el paciente llegue.
 		const date = new Date(oneTurn.date);
-		const job = schedule.scheduleJob(date, function () {
-			oneTurn.status = 'waitingForPatient';
-			oneTurn.save();
-			console.log('Its time', oneTurn);
+		// guardamos el job con el identificador igual al id del turno
+		const job = schedule.scheduleJob(oneTurn._id, date, function () {
+			if (oneTurn.status === 'pending') {
+				oneTurn.status = 'waitingForPatient';
+				oneTurn.save();
+				console.log('Its time', oneTurn);
+				return;
+			}
+			console.log('El turno ya habia sido cambiado de estado');
 		});
 		// guardamos el turno en el paciente
 		const onePatient = await Patient.findById(oneTurn.patient_id);
@@ -121,6 +129,10 @@ const deleteTurnById = async (req, res, next) => {
 			});
 			return;
 		}
+		// Leemos el job existente para cambiar el estado
+		const existingJob = schedule.scheduledJobs[deletedTurn._id];
+		// Cancelamos dicho job
+		existingJob.cancel();
 		res.status(200).json({
 			success: true,
 			data: deletedTurn,
@@ -129,8 +141,6 @@ const deleteTurnById = async (req, res, next) => {
 		next(error);
 	}
 };
-
-
 
 module.exports = {
 	createTurn,

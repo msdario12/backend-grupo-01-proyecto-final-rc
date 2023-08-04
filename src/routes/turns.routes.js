@@ -21,7 +21,12 @@ turnsRouter.post(
 	checkIfPatientAndDateAlreadyExist(),
 	createTurn
 );
-turnsRouter.put('/:id', newTurnValidator(), editTurn);
+turnsRouter.put(
+	'/:id',
+	newTurnValidator(),
+	checkIfPatientAndDateAlreadyExist(),
+	editTurn
+);
 turnsRouter.delete('/:id', deleteTurnById);
 
 module.exports = { turnsRouter };
