@@ -1,6 +1,5 @@
 const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
-const { Patient } = require('../models/patients.models');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -94,4 +93,32 @@ const getTurnById = async (req, res, next) => {
 	}
 };
 
-module.exports = { createTurn, editTurn, getAllTurns, getTurnById };
+const deleteTurnById = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+
+		const deletedTurn = await Turn.findOneAndDelete({ _id: id });
+
+		if (!deletedTurn) {
+			res.status(400).json({
+				success: false,
+				message: 'Turno no encontrado',
+			});
+			return;
+		}
+		res.status(200).json({
+			success: true,
+			data: deletedTurn,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = {
+	createTurn,
+	editTurn,
+	getAllTurns,
+	getTurnById,
+	deleteTurnById,
+};
