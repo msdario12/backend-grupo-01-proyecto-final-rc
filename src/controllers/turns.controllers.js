@@ -2,7 +2,7 @@ const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
-const { socketIO } = require('../socketApi');
+const socketIO = require('../app');
 
 const editTurn = async (req, res, next) => {
 	try {

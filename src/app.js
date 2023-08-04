@@ -4,12 +4,28 @@ const mongoose = require('mongoose');
 const { router } = require('./routes/index.routes');
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/error.middlewares');
-const { server } = require('./socketApi');
-
 require('dotenv').config();
 // puerto
 const PORT = process.env.PORT;
 const app = express();
+
+// creamos un nuevo httpserver para app y io
+const server = require('http').createServer(app);
+
+//pasamos el server para crear la instancia de socketIO
+const socketIO = require('socket.io')(server, {
+	cors: {
+		origin: 'http://localhost:5173',
+	},
+});
+
+socketIO.on('connection', (socket) => {
+	console.log(`⚡: ${socket.id} user just connected`);
+	socket.on('disconnect', () => {
+		console.log('A user disconnected');
+	});
+	socket.emit('foo', 'te conectaste rey');
+});
 
 // middlewares
 app.use(cors());
@@ -30,7 +46,7 @@ app.use('/api', router);
 
 // error handler
 app.use(errorHandler);
-// server viene de socketApi
+// server tiene socket y app
 server.listen(PORT, () => {
 	mongoose
 		.connect(process.env.DB_CONNECT)
@@ -38,5 +54,5 @@ server.listen(PORT, () => {
 		.catch((error) => console.log('Database error: ' + error));
 	console.log(`Server on in http://localhost:${PORT}`);
 });
-// app se exporta a socketApi, donde se lo carga en server con el socket
-module.exports = app;
+// exportamos socketIO
+module.exports = socketIO;
