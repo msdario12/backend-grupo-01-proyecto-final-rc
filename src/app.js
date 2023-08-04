@@ -19,6 +19,9 @@ const socketIO = require('socket.io')(server, {
 	},
 });
 
+// añadimos el socketIO al global variable para ser usado por otros módulos
+global.io = socketIO;
+
 socketIO.on('connection', (socket) => {
 	console.log(`⚡: ${socket.id} user just connected`);
 	socket.on('disconnect', () => {
@@ -54,5 +57,4 @@ server.listen(PORT, () => {
 		.catch((error) => console.log('Database error: ' + error));
 	console.log(`Server on in http://localhost:${PORT}`);
 });
-// exportamos socketIO
-module.exports = socketIO;
+

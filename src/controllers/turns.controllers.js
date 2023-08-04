@@ -2,7 +2,7 @@ const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
-const socketIO = require('../app');
+
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -63,7 +63,6 @@ const createTurn = async (req, res, next) => {
 					oneTurn.status = 'waitingForPatient';
 					oneTurn.save();
 					console.log('Its time', oneTurn);
-					socketIO.emit('foo', 'Se actulizo el estado')
 					return;
 				}
 				console.log('El turno ya habia sido cambiado de estado');
@@ -89,7 +88,7 @@ const createTurn = async (req, res, next) => {
 const getAllTurns = async (req, res, next) => {
 	try {
 		const allTurns = await Turn.find();
-
+		io.emit('foo', 'Respuesta a la prueba 👑')
 		return res.status(200).json({
 			success: true,
 			data: allTurns,
