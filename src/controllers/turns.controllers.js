@@ -57,13 +57,17 @@ const createTurn = async (req, res, next) => {
 		const date = new Date(oneTurn.date);
 		// guardamos el job con el identificador igual al id del turno
 		const job = schedule.scheduleJob(oneTurn._id, date, function () {
-			if (oneTurn.status === 'pending') {
-				oneTurn.status = 'waitingForPatient';
-				oneTurn.save();
-				console.log('Its time', oneTurn);
-				return;
+			try {
+				if (oneTurn.status === 'pending') {
+					oneTurn.status = 'waitingForPatient';
+					oneTurn.save();
+					console.log('Its time', oneTurn);
+					return;
+				}
+				console.log('El turno ya habia sido cambiado de estado');
+			} catch (error) {
+				next(error);
 			}
-			console.log('El turno ya habia sido cambiado de estado');
 		});
 		// guardamos el turno en el paciente
 		const onePatient = await Patient.findById(oneTurn.patient_id);
