@@ -2,7 +2,7 @@ const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
-
+const { createToastMessage } = require('../helpers/createToastMessage.helpers');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -56,12 +56,21 @@ const createTurn = async (req, res, next) => {
 		// Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
 		// En el front se debera setear el estado de inProgress cuando el paciente llegue.
 		const date = new Date(oneTurn.date);
+
+		// guardamos el turno en el paciente
+		const onePatient = await Patient.findById(oneTurn.patient_id)
+			.populate('user_id')
+			.populate('pet_id', 'name');
+		// el patient_id se valida en el middleware de express-validator
+		// podemos afirmar que si existe un onePatient con ese id
 		// guardamos el job con el identificador igual al id del turno
-		const job = schedule.scheduleJob( date, function() {
+		const job = schedule.scheduleJob(date, function () {
 			try {
 				if (oneTurn.status === 'pending') {
 					oneTurn.status = 'waitingForPatient';
 					oneTurn.save();
+					const msg = `El turno de ${onePatient.user_id.firstName} ${onePatient.user_id.lastName}, para su mascota ${onePatient.pet_id.name} se cambio al estado de "Esperando paciente"`;
+					io.emit('foo', createToastMessage('success', msg));
 					console.log('Its time', oneTurn);
 					return;
 				}
@@ -70,10 +79,7 @@ const createTurn = async (req, res, next) => {
 				next(error);
 			}
 		});
-		// guardamos el turno en el paciente
-		const onePatient = await Patient.findById(oneTurn.patient_id);
-		// el patient_id se valida en el middleware de express-validator
-		// podemos afirmar que si existe un onePatient con ese id
+		// agregamos el turno al paciente
 		onePatient.turns.push(oneTurn._id);
 		onePatient.save();
 		return res.status(201).json({
@@ -88,7 +94,6 @@ const createTurn = async (req, res, next) => {
 const getAllTurns = async (req, res, next) => {
 	try {
 		const allTurns = await Turn.find();
-		io.emit('foo', 'Respuesta a la prueba 👑')
 		return res.status(200).json({
 			success: true,
 			data: allTurns,

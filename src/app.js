@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { router } = require('./routes/index.routes');
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/error.middlewares');
+const { createToastMessage } = require('./helpers/createToastMessage.helpers');
 require('dotenv').config();
 // puerto
 const PORT = process.env.PORT;
@@ -27,7 +28,10 @@ socketIO.on('connection', (socket) => {
 	socket.on('disconnect', () => {
 		console.log('A user disconnected');
 	});
-	socket.emit('foo', 'te conectaste rey');
+	socket.emit(
+		'foo',
+		createToastMessage('success', 'Conexión con el servidor correcta')
+	);
 });
 
 // middlewares
@@ -57,4 +61,3 @@ server.listen(PORT, () => {
 		.catch((error) => console.log('Database error: ' + error));
 	console.log(`Server on in http://localhost:${PORT}`);
 });
-
