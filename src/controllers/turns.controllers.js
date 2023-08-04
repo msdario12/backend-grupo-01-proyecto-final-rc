@@ -2,6 +2,41 @@ const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
 const { Patient } = require('../models/patients.models');
 
+const editTurn = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+
+		let errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+		// Trabajar con los datos saneados del express validator
+		const turnData = matchedData(req);
+
+		console.log(turnData);
+
+		const updatedTurn = await Turn.findOneAndUpdate({ _id: id }, turnData, {
+			new: true,
+		});
+
+		if (!updatedTurn) {
+			res.status(400).json({
+				success: false,
+				message: 'Turno no válido',
+			});
+			return;
+		}
+
+		return res.status(200).json({
+			success: true,
+			data: updatedTurn,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
 const createTurn = async (req, res, next) => {
 	try {
 		let errors = validationResult(req);
@@ -12,18 +47,11 @@ const createTurn = async (req, res, next) => {
 		// Trabajar con los datos saneados del express validator
 		const turnData = matchedData(req);
 
-		const patient = await Patient.findById(turnData.patient_id);
-		if (!patient) {
-			res.status(400).json({
-				success: false,
-				message: 'Paciente no encontrado',
-			});
-			return;
-		}
+		
 
 		const oneTurn = await Turn.create(turnData);
 
-		res.status(201).json({
+		return res.status(201).json({
 			success: true,
 			data: oneTurn,
 		});
@@ -32,4 +60,4 @@ const createTurn = async (req, res, next) => {
 	}
 };
 
-module.exports = { createTurn };
+module.exports = { createTurn, editTurn };

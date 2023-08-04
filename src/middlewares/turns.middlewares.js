@@ -1,5 +1,6 @@
 const { body, check } = require('express-validator');
 const { default: mongoose } = require('mongoose');
+const { Patient } = require('../models/patients.models');
 
 const validStatus = [
 	'pending',
@@ -59,7 +60,13 @@ const newTurnValidator = () => {
 			.withMessage('patient_id es un campo obligatorio.')
 			.custom((value) => mongoose.isValidObjectId(value))
 			.withMessage('patient_id no es valido.')
-
+			.custom(async (value, { req }) => {
+				const patient = await Patient.findById(value);
+				if (!patient) {
+					throw new Error('patient_id invalido');
+				}
+				return true;
+			})
 	);
 
 	return validatorList;
