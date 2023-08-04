@@ -1,5 +1,6 @@
 const { matchedData, validationResult } = require('express-validator');
 const { Turn } = require('../models/turns.models');
+const schedule = require('node-schedule');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -47,6 +48,15 @@ const createTurn = async (req, res, next) => {
 		const turnData = matchedData(req);
 
 		const oneTurn = await Turn.create(turnData);
+		// Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
+		// En el front se debera setear el estado de inProgress cuando el paciente llegue.
+		const date = new Date(oneTurn.date);
+		const job = schedule.scheduleJob(date, function () {
+			oneTurn.status = 'waitingForPatient';
+			oneTurn.save();
+			console.log('Its time', oneTurn);
+		});
+		console.log(date);
 
 		return res.status(201).json({
 			success: true,
