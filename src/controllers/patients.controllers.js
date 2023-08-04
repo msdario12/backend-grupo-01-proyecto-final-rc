@@ -130,6 +130,54 @@ const getPatientByID = async (req, res, next) => {
 
 const getAllPatients = async (req, res, next) => {
 	try {
+		const { searchParam } = req.query;
+		if (searchParam) {
+			const allPatientsMulti = await Patient.find()
+				.populate({
+					path: 'pet_id',
+					match: { name: { $regex: searchParam, $options: 'i' } }, // Búsqueda insensible a mayúsculas/minúsculas
+				})
+				.populate({
+					path: 'user_id',
+					match: {
+						$or: [
+							{ firstName: { $regex: searchParam, $options: 'i' } },
+							{ lastName: { $regex: searchParam, $options: 'i' } },
+							{ email: { $regex: searchParam, $options: 'i' } },
+						],
+					},
+				})
+				.exec();
+
+			// Filtrar solo los pacientes que tienen un pet o un user que coinciden con el searchTerm
+			const filteredResults = allPatientsMulti.filter(
+				(patient) => patient.pet_id || patient.user_id
+			);
+
+			if (filteredResults.length === 0) {
+				res.status(200).json({
+					success: true,
+					message: 'No se encuentra un paciente con esos criterios',
+				});
+				return;
+			}
+
+			// Obtener la información completa de las mascotas y usuarios populados
+			const populatedResults = await Promise.all(
+				filteredResults.map(async (patient) => {
+					const foundPatient = await Patient.findById(patient._id)
+						.populate('user_id')
+						.populate('pet_id');
+					return foundPatient;
+				})
+			);
+
+			res.status(200).json({
+				success: true,
+				data: populatedResults,
+			});
+			return;
+		}
 		const allPatients = await Patient.find()
 			.populate('user_id')
 			.populate('pet_id');

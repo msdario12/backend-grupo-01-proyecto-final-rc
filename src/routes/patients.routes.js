@@ -9,7 +9,8 @@ const { authJwt, isAdmin } = require('../middlewares/authJwt.middlewares');
 const { newPatientValidator } = require('../middlewares/patients.middlewares');
 
 const patientsRouter = Router();
-patientsRouter.get('/', authJwt, isAdmin, getAllPatients);
+// authJwt, isAdmin,
+patientsRouter.get('/',  getAllPatients);
 patientsRouter.get('/:id', getPatientByID);
 patientsRouter.post('/', newPatientValidator(), createNewPatient);
 patientsRouter.delete('/:id', deletePatientByID);
