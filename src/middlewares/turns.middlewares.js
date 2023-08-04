@@ -1,6 +1,7 @@
-const { body, check } = require('express-validator');
+const { body, check, matchedData } = require('express-validator');
 const { default: mongoose } = require('mongoose');
 const { Patient } = require('../models/patients.models');
+const { Turn } = require('../models/turns.models');
 
 const validStatus = [
 	'pending',
@@ -72,4 +73,21 @@ const newTurnValidator = () => {
 	return validatorList;
 };
 
-module.exports = { newTurnValidator };
+const checkIfPatientAndDateAlreadyExist = () => {
+	return [
+		body('patient_id').custom(async (value, { req }) => {
+			const turnData = matchedData(req);
+			const foundedTurn = await Turn.findOne({
+				patient_id: value,
+				date: turnData.date,
+			});
+			console.log(foundedTurn);
+			if (foundedTurn) {
+				throw new Error('Un turno con la misma fecha y patiend_id ya existe');
+			}
+			return true;
+		}),
+	];
+};
+
+module.exports = { newTurnValidator, checkIfPatientAndDateAlreadyExist };
