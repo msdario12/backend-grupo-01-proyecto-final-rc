@@ -47,8 +47,6 @@ const createTurn = async (req, res, next) => {
 		// Trabajar con los datos saneados del express validator
 		const turnData = matchedData(req);
 
-		
-
 		const oneTurn = await Turn.create(turnData);
 
 		return res.status(201).json({
@@ -60,17 +58,40 @@ const createTurn = async (req, res, next) => {
 	}
 };
 
-const getAllTurns = async (req,res,next) => {
+const getAllTurns = async (req, res, next) => {
 	try {
-		const allTurns = await Turn.find()
+		const allTurns = await Turn.find();
 
 		return res.status(200).json({
 			success: true,
 			data: allTurns,
 		});
 	} catch (error) {
-		next(error)
+		next(error);
 	}
-}
+};
 
-module.exports = { createTurn, editTurn, getAllTurns };
+const getTurnById = async (req, res, next) => {
+	try {
+		const { id } = req.params;
+
+		const turn = await Turn.findById(id);
+
+		if (!turn) {
+			res.status(400).json({
+				success: false,
+				message: 'Turno no encontrado',
+			});
+			return;
+		}
+
+		return res.status(200).json({
+			success: true,
+			data: turn,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { createTurn, editTurn, getAllTurns, getTurnById };
