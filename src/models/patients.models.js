@@ -17,6 +17,13 @@ const patientsSchema = Schema({
 		required: true,
 		_id: false,
 	},
+	turns: [
+		{
+			type: Types.ObjectId,
+			ref: 'turns',
+			_id: false,
+		},
+	],
 });
 
 patientsSchema.post('findOneAndDelete', async (doc) => {
