@@ -28,15 +28,17 @@ const turnsSchema = Schema({
 		default: 'pending',
 	},
 });
-
-turnsSchema.post('findOneAndDelete', async (doc) => {
-	console.log(doc);
-	const patient = await Patient.findOne({ _id: doc.patient_id });
+// middleware para borrar turno del array de paciente
+turnsSchema.pre('findOneAndDelete', async function () {
+	// obtenemos el id del turno
+	const turnId = this.getQuery();
+	const turn = await Turn.findOne({ _id: turnId });
+	const patient = await Patient.findById(turn.patient_id);
+	// podemos asegurar que existe un paciente con ese id
 	if (patient.turns) {
-		patient.turns.pull(doc._id);
-		patient.save();
-		console.log(patient);
-		console.log(patient.pets.length);
+		// sacamos del array de turnos del paciente el turno que se esta eliminando
+		patient.turns.pull(turnId);
+		await patient.save();
 	}
 });
 
