@@ -5,6 +5,7 @@ const { router } = require('./routes/index.routes');
 const cors = require('cors');
 const { errorHandler } = require('./middlewares/error.middlewares');
 const { createToastMessage } = require('./helpers/createToastMessage.helpers');
+const { corsOptions } = require('../config/cors-options');
 require('dotenv').config();
 // puerto
 const PORT = process.env.PORT;
@@ -35,7 +36,7 @@ socketIO.on('connection', (socket) => {
 });
 
 // middlewares
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

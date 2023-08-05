@@ -2,7 +2,8 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../models/users.models');
 
 const authJwt = (req, res, next) => {
-	const token = req.headers['x-access-token'];
+	const header = req.headers['authorization'];
+	const token = header?.split(' ')[1];
 	if (!token) {
 		res.status(403).json({
 			success: false,
@@ -20,6 +21,9 @@ const authJwt = (req, res, next) => {
 		}
 		console.log(decoded);
 		req.userId = decoded.id;
+		req.firstName = decoded.firstName;
+		req.role = decoded.role;
+		req.email = decoded.email;
 		next();
 	});
 };

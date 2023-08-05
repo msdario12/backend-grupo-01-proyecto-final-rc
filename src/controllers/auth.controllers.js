@@ -1,6 +1,21 @@
 const { User } = require('../models/users.models');
 const jwt = require('jsonwebtoken');
 
+const validateToken = async (req, res, next) => {
+	try {
+		const { firstName, email, role } = req;
+		res.status(200).json({
+			success: true,
+			message: 'Token válido',
+			firstName: firstName,
+			role: role,
+			email: email,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
 const handleLogin = async (req, res, next) => {
 	try {
 		const { email, password } = req.body;
@@ -42,18 +57,21 @@ const handleLogin = async (req, res, next) => {
 			},
 			process.env.ACCESS_TOKEN_SECRET,
 			{
-				expiresIn: '30min',
+				expiresIn: '2h',
 			}
 		);
 
 		res.status(200).json({
 			success: true,
 			message: 'Autenticación correcta',
-			data: accessToken,
+			accessToken: accessToken,
+			firstName: foundedUser.firstName,
+			role: foundedUser.role,
+			email: foundedUser.email,
 		});
 	} catch (error) {
 		next(error);
 	}
 };
 
-module.exports = { handleLogin };
+module.exports = { handleLogin, validateToken };

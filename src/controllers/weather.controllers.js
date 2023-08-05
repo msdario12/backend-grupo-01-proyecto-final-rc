@@ -10,7 +10,6 @@ const getWeatherInfo = async (req, res, next) => {
 		const response = await weatherAPI.get(`/current.json`, {
 			params: config,
 		});
-		console.log(response.data);
 		res.status(200).json({
 			success: true,
 			data: response.data,
