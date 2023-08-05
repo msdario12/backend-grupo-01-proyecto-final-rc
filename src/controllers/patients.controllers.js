@@ -174,7 +174,7 @@ const getAllPatients = async (req, res, next) => {
 
 			res.status(200).json({
 				success: true,
-				data: populatedResults,
+				data: formatPatients(populatedResults),
 			});
 			return;
 		}
@@ -182,11 +182,9 @@ const getAllPatients = async (req, res, next) => {
 			.populate('user_id')
 			.populate('pet_id');
 
-		const formattedAllPatients = formatPatients(allPatients);
-
 		res.status(200).json({
 			success: true,
-			data: formattedAllPatients,
+			data: formatPatients(allPatients),
 		});
 	} catch (error) {
 		next(error);
