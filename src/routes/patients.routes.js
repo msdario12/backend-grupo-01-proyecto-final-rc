@@ -10,10 +10,10 @@ const { newPatientValidator } = require('../middlewares/patients.middlewares');
 
 const patientsRouter = Router();
 // authJwt, isAdmin,
-patientsRouter.get('/',  getAllPatients);
-patientsRouter.get('/:id', getPatientByID);
-patientsRouter.post('/', newPatientValidator(), createNewPatient);
-patientsRouter.delete('/:id', deletePatientByID);
+patientsRouter.get('/', authJwt, getAllPatients);
+patientsRouter.get('/:id', authJwt, getPatientByID);
+patientsRouter.post('/', newPatientValidator(), authJwt, createNewPatient);
+patientsRouter.delete('/:id', authJwt, deletePatientByID);
 
 module.exports = {
 	patientsRouter,
