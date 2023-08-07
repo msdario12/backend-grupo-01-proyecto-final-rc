@@ -54,8 +54,8 @@ const editUserByID = async (req, res, next) => {
 		);
 
 		if (!oneUser) {
-			return res.status(200).json({
-				success: true,
+			return res.status(400).json({
+				success: false,
 				response: 'Usuario no encontrado',
 			});
 		}

@@ -5,8 +5,8 @@ const getPetByID = async (req, res, next) => {
 	try {
 		const onePet = await Pet.findById(id);
 		if (!onePet) {
-			res.status(200).json({
-				success: true,
+			res.status(400).json({
+				success: false,
 				message: 'Mascota no encontrada',
 			});
 			return;
@@ -29,8 +29,8 @@ const editPetByID = async (req, res, next) => {
 		});
 
 		if (!onePet) {
-			return res.status(200).json({
-				success: true,
+			return res.status(400).json({
+				success: false,
 				message: 'Mascota no encontrada',
 			});
 		}
