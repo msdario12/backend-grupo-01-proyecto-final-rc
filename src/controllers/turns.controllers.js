@@ -100,14 +100,14 @@ const getAllTurns = async (req, res, next) => {
 				path: 'patient_id',
 				populate: {
 					path: 'user_id pet_id',
-					select: 'name firstName lastName',
+					select: 'name firstName lastName specie',
 					options: { _recursed: true },
 				},
 			})
 			.lean()
 			.exec();
 
-		const flattenTurns = allTurns.map((turn) => flatten(turn));
+		const flattenTurns = allTurns.map((turn, index) => flatten({...turn, index: index+1}));
 
 		return res.status(200).json({
 			success: true,
