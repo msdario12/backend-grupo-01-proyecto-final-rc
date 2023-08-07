@@ -76,6 +76,11 @@ const checkIfEmailHasOriginalValues = async (req, res, next) => {
 		const data = matchedData(req);
 		const foundedUser = await User.findOne({ email: data.email });
 
+		if (!foundedUser) {
+			next();
+			return;
+		}
+
 		const { firstName, lastName, phone } = foundedUser;
 
 		if (foundedUser) {
