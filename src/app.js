@@ -16,9 +16,7 @@ const server = require('http').createServer(app);
 
 //pasamos el server para crear la instancia de socketIO
 const socketIO = require('socket.io')(server, {
-	cors: {
-		origin: 'http://localhost:5173',
-	},
+	cors: corsOptions,
 });
 
 // añadimos el socketIO al global variable para ser usado por otros módulos
