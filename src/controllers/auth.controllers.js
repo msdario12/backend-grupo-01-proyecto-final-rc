@@ -1,32 +1,49 @@
 const { User } = require('../models/users.models');
 const jwt = require('jsonwebtoken');
 
+const validateToken = async (req, res, next) => {
+	try {
+		const { firstName, email, role } = req;
+		res.status(200).json({
+			success: true,
+			message: 'Token válido',
+			firstName: firstName,
+			role: role,
+			email: email,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
+
 const handleLogin = async (req, res, next) => {
 	try {
 		const { email, password } = req.body;
 
-		const foundedUser = await User.findOne({ email: email });
+		console.log(email);
 
+		const foundedUser = await User.findOne({ email: email });
 		if (!foundedUser) {
 			res.status(200).json({
-				success: true,
+				success: false,
 				message: 'Correo no encontrado',
+			});
+			return;
+		}
+
+		// Falta agregar la comparación con hash
+		if (foundedUser.password !== password) {
+			res.status(200).json({
+				success: false,
+				message: 'Contraseña incorrecta',
 			});
 			return;
 		}
 		// Solo usuarios con rol de administrador pueden loguear
 		if (foundedUser.role !== 'admin') {
 			res.status(200).json({
-				success: true,
+				success: false,
 				message: 'El usuario no tiene los permisos necesarios',
-			});
-			return;
-		}
-		// Falta agregar la comparación con hash
-		if (foundedUser.password !== password) {
-			res.status(200).json({
-				success: true,
-				message: 'Contraseña incorrecta',
 			});
 			return;
 		}
@@ -40,18 +57,21 @@ const handleLogin = async (req, res, next) => {
 			},
 			process.env.ACCESS_TOKEN_SECRET,
 			{
-				expiresIn: '30min',
+				expiresIn: '2h',
 			}
 		);
 
 		res.status(200).json({
 			success: true,
 			message: 'Autenticación correcta',
-			data: accessToken,
+			accessToken: accessToken,
+			firstName: foundedUser.firstName,
+			role: foundedUser.role,
+			email: foundedUser.email,
 		});
 	} catch (error) {
 		next(error);
 	}
 };
 
-module.exports = { handleLogin };
+module.exports = { handleLogin, validateToken };

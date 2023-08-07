@@ -17,8 +17,15 @@ const patientsSchema = Schema({
 		required: true,
 		_id: false,
 	},
+	turns: [
+		{
+			type: Types.ObjectId,
+			ref: 'turns',
+			_id: false,
+		},
+	],
 });
-
+// middleware que al borrar un paciente, remueve la mascota del usuario (array pets de user) y elimina dicha mascota (del modelo pets)
 patientsSchema.post('findOneAndDelete', async (doc) => {
 	const user = await User.findOne({ _id: doc.user_id });
 	if (user.pets) {
