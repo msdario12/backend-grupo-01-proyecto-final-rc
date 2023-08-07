@@ -1,5 +1,5 @@
 const corsOptions = {
-	origin: 'http://181.117.24.59:5173',
+	origin: 'http://181.117.24.59',
 	credentials: true,
 	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 	allowedHeaders: [
