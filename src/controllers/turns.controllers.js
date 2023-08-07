@@ -3,6 +3,7 @@ const { Turn } = require('../models/turns.models');
 const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
 const { createToastMessage } = require('../helpers/createToastMessage.helpers');
+const flatten = require('flat');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -91,12 +92,26 @@ const createTurn = async (req, res, next) => {
 	}
 };
 
+
 const getAllTurns = async (req, res, next) => {
 	try {
-		const allTurns = await Turn.find();
+		const allTurns = await Turn.find({})
+			.populate({
+				path: 'patient_id',
+				populate: {
+					path: 'user_id pet_id',
+					select: 'name firstName lastName',
+					options: { _recursed: true },
+				},
+			})
+			.lean()
+			.exec();
+
+		const flattenTurns = allTurns.map((turn) => flatten(turn));
+
 		return res.status(200).json({
 			success: true,
-			data: allTurns,
+			data: flattenTurns,
 		});
 	} catch (error) {
 		next(error);
