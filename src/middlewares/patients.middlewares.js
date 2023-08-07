@@ -1,4 +1,5 @@
-const { body } = require('express-validator');
+const { body, matchedData } = require('express-validator');
+const { User } = require('../models/users.models');
 
 const validSpecies = [
 	'perro',
@@ -70,4 +71,30 @@ const newPatientValidator = () => {
 	return validatorList;
 };
 
-module.exports = { newPatientValidator };
+const checkIfEmailHasOriginalValues = async (req, res, next) => {
+	try {
+		const data = matchedData(req);
+		const foundedUser = await User.findOne({ email: data.email });
+
+		const { firstName, lastName, phone } = foundedUser;
+
+		if (foundedUser) {
+			const firstNameComparison = firstName == data.firstName;
+			const lastNameComparison = lastName == data.lastName;
+			const phoneComparison = phone == data.phone;
+			if (!firstNameComparison || !lastNameComparison || !phoneComparison) {
+				res.status(400).json({
+					success: false,
+					message:
+						'Se recibe un paciente con un email existente pero datos distintos',
+				});
+				return;
+			}
+		}
+		next();
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { newPatientValidator, checkIfEmailHasOriginalValues };

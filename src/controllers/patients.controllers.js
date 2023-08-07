@@ -34,15 +34,7 @@ const createNewPatient = async (req, res, next) => {
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;
 		const foundedUser = await User.findOne({ email: email });
-		const foundedPet = await Pet.findOne({ name: name, specie: specie });
-		if (foundedPet) {
-			// Se encuentra la misma mascota y usuario
-			res.status(400).json({
-				success: false,
-				message: 'La mascota ya se encuentra en el sistema.',
-			});
-			return;
-		}
+		
 		if (foundedUser) {
 			//Existe usuario
 
