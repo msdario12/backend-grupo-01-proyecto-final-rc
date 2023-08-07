@@ -3,10 +3,10 @@ const { User } = require('../models/users.models');
 
 const checkIfEmailAlreadyExist = async (req, res, next) => {
 	try {
-		const {id} = req.params
+		const { id } = req.params;
 		const data = req.body;
 		const foundedUser = await User.findOne({ email: data.email });
-		if (foundedUser && foundedUser._id !== id) {
+		if (foundedUser && foundedUser._id != id) {
 			res.status(400).json({
 				success: false,
 				message: 'El correo ya se encuentra registrado en el sistema.',
