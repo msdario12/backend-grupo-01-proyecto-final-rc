@@ -4,6 +4,7 @@ const schedule = require('node-schedule');
 const { Patient } = require('../models/patients.models');
 const { createToastMessage } = require('../helpers/createToastMessage.helpers');
 const flatten = require('flat');
+const addMinutes = require('date-fns/addMinutes');
 
 const editTurn = async (req, res, next) => {
 	try {
@@ -52,7 +53,9 @@ const createTurn = async (req, res, next) => {
 		}
 		// Trabajar con los datos saneados del express validator
 		const turnData = matchedData(req);
-
+		// Creamos la fecha del turno media hora despues
+		const endDate = addMinutes(new Date(turnData.date), 30);
+		turnData.endDate = endDate;
 		const oneTurn = await Turn.create(turnData);
 		// Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
 		// En el front se debera setear el estado de inProgress cuando el paciente llegue.
@@ -92,7 +95,6 @@ const createTurn = async (req, res, next) => {
 	}
 };
 
-
 const getAllTurns = async (req, res, next) => {
 	try {
 		const allTurns = await Turn.find({})
@@ -107,7 +109,9 @@ const getAllTurns = async (req, res, next) => {
 			.lean()
 			.exec();
 
-		const flattenTurns = allTurns.map((turn, index) => flatten({...turn, index: index+1}));
+		const flattenTurns = allTurns.map((turn, index) =>
+			flatten({ ...turn, index: index + 1 })
+		);
 
 		return res.status(200).json({
 			success: true,
