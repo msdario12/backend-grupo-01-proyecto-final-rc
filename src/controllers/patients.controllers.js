@@ -34,7 +34,7 @@ const createNewPatient = async (req, res, next) => {
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;
 		const foundedUser = await User.findOne({ email: email });
-		
+
 		if (foundedUser) {
 			//Existe usuario
 
