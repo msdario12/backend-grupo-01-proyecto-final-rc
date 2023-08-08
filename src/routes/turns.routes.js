@@ -9,6 +9,7 @@ const {
 const {
 	newTurnValidator,
 	checkIfATurnWithSameDateExist,
+	checkIfDateIsNew,
 } = require('../middlewares/turns.middlewares');
 
 const turnsRouter = Router();
@@ -25,6 +26,7 @@ turnsRouter.put(
 	'/:id',
 	newTurnValidator(),
 	checkIfATurnWithSameDateExist(),
+	checkIfDateIsNew,
 	editTurn
 );
 turnsRouter.delete('/:id', deleteTurnById);

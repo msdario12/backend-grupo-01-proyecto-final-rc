@@ -1,10 +1,12 @@
 const { body, check, matchedData } = require('express-validator');
+
 const { default: mongoose } = require('mongoose');
 const { Patient } = require('../models/patients.models');
 const { Turn } = require('../models/turns.models');
 const areIntervalsOverlapping = require('date-fns/areIntervalsOverlapping');
 const parseISO = require('date-fns/parseISO');
 const addMinutes = require('date-fns/addMinutes');
+const { scheduledJobs } = require('node-schedule');
 
 const validStatus = [
 	'pending',
@@ -100,7 +102,7 @@ const checkIfATurnWithSameDateExist = () => {
 					},
 				],
 			});
-			if (foundedTurn) {
+			if (foundedTurn && foundedTurn.patient_id == matchedData.patient_id) {
 				// El turno tiene exactamente la misma fecha de inicio
 				throw new Error('Ya existe un turno con la misma fecha');
 			}
@@ -110,7 +112,38 @@ const checkIfATurnWithSameDateExist = () => {
 	];
 };
 
+const checkIfDateIsNew = async (req, res, next) => {
+	try {
+		const turnData = matchedData(req);
+		const { id } = req.params;
+
+		const originalTurn = await Turn.findById(id);
+		console.log('Middleware', id);
+		// Vemos si se cambio la fecha
+		// Vemos si se cambio la fecha
+		console.log(originalTurn.date.toISOString());
+		console.log(turnData.date);
+		if (turnData.date != originalTurn.date) {
+			// Leemos el job existente para cambiar el estado
+			
+			const existingJob = scheduledJobs[String(id)];
+			const newDate = new Date(turnData.date);
+			// Cambiamos la fecha de dicho job
+			if (existingJob) {
+				existingJob.reschedule(newDate);
+			}
+			// actualizamos la fecha del turno
+			const endDate = addMinutes(parseISO(turnData.date), 30);
+			req.endDate = endDate.toISOString();
+		}
+		next();
+	} catch (error) {
+		next(error);
+	}
+};
+
 module.exports = {
 	newTurnValidator,
 	checkIfATurnWithSameDateExist,
+	checkIfDateIsNew,
 };
