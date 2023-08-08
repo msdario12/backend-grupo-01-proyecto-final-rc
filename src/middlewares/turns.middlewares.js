@@ -2,6 +2,9 @@ const { body, check, matchedData } = require('express-validator');
 const { default: mongoose } = require('mongoose');
 const { Patient } = require('../models/patients.models');
 const { Turn } = require('../models/turns.models');
+const areIntervalsOverlapping = require('date-fns/areIntervalsOverlapping');
+const parseISO = require('date-fns/parseISO');
+const addMinutes = require('date-fns/addMinutes');
 
 const validStatus = [
 	'pending',
@@ -73,18 +76,23 @@ const newTurnValidator = () => {
 	return validatorList;
 };
 
-
 const checkIfATurnWithSameDateExist = () => {
 	return [
 		body('date').custom(async (value, { req }) => {
 			const turnData = matchedData(req);
+			const endDate = addMinutes(parseISO(value), 30);
 			const foundedTurn = await Turn.findOne({
-				date: turnData.date,
+				date: {
+					$gt: new Date(turnData.date),
+					$lt: endDate,
+				},
 				vet: turnData.vet,
 			});
 			if (foundedTurn) {
+				// El turno tiene exactamente la misma fecha de inicio
 				throw new Error('Ya existe un turno con la misma fecha');
 			}
+
 			return true;
 		}),
 	];
