@@ -32,19 +32,6 @@ const editTurn = async (req, res, next) => {
 			return;
 		}
 
-		// Vemos si se cambio la fecha
-		// if (updatedTurn.date.toISOString() != turnData.date) {
-		// 	// Leemos el job existente para cambiar el estado
-		// 	const existingJob = schedule.scheduledJobs[updatedTurn._id];
-		// 	const newDate = new Date(updatedTurn.date);
-		// 	// Cambiamos la fecha de dicho job
-		// 	existingJob.reschedule(newDate);
-		// 	// actualizamos la fecha del turno
-		// 	const endDate = addMinutes(updatedTurn.date, 30);
-		// 	updatedTurn.endDate = endDate.toISOString();
-		// 	updatedTurn.save();
-		// }
-
 		return res.status(200).json({
 			success: true,
 			data: updatedTurn,

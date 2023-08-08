@@ -75,6 +75,15 @@ const newTurnValidator = () => {
 			})
 	);
 
+	validatorList.push(
+		body('status')
+			.trim()
+			.optional()
+			.isIn(validStatus)
+			.withMessage('Tipo de mascota no soportado.')
+			.escape()
+	);
+
 	return validatorList;
 };
 
@@ -125,7 +134,7 @@ const checkIfDateIsNew = async (req, res, next) => {
 		console.log(turnData.date);
 		if (turnData.date != originalTurn.date) {
 			// Leemos el job existente para cambiar el estado
-			
+
 			const existingJob = scheduledJobs[String(id)];
 			const newDate = new Date(turnData.date);
 			// Cambiamos la fecha de dicho job

@@ -11,6 +11,7 @@ const {
 	checkIfATurnWithSameDateExist,
 	checkIfDateIsNew,
 } = require('../middlewares/turns.middlewares');
+const { body } = require('express-validator');
 
 const turnsRouter = Router();
 
