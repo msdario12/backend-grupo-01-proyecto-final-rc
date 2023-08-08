@@ -73,21 +73,24 @@ const newTurnValidator = () => {
 	return validatorList;
 };
 
-const checkIfPatientAndDateAlreadyExist = () => {
+
+const checkIfATurnWithSameDateExist = () => {
 	return [
-		body('patient_id').custom(async (value, { req }) => {
+		body('date').custom(async (value, { req }) => {
 			const turnData = matchedData(req);
 			const foundedTurn = await Turn.findOne({
-				patient_id: value,
 				date: turnData.date,
+				vet: turnData.vet,
 			});
-			console.log(foundedTurn);
 			if (foundedTurn) {
-				throw new Error('Un turno con la misma fecha y patiend_id ya existe');
+				throw new Error('Ya existe un turno con la misma fecha');
 			}
 			return true;
 		}),
 	];
 };
 
-module.exports = { newTurnValidator, checkIfPatientAndDateAlreadyExist };
+module.exports = {
+	newTurnValidator,
+	checkIfATurnWithSameDateExist,
+};

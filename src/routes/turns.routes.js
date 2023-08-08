@@ -8,7 +8,7 @@ const {
 } = require('../controllers/turns.controllers');
 const {
 	newTurnValidator,
-	checkIfPatientAndDateAlreadyExist,
+	checkIfATurnWithSameDateExist,
 } = require('../middlewares/turns.middlewares');
 
 const turnsRouter = Router();
@@ -18,13 +18,13 @@ turnsRouter.get('/', getAllTurns);
 turnsRouter.post(
 	'/',
 	newTurnValidator(),
-	checkIfPatientAndDateAlreadyExist(),
+	checkIfATurnWithSameDateExist(),
 	createTurn
 );
 turnsRouter.put(
 	'/:id',
 	newTurnValidator(),
-	checkIfPatientAndDateAlreadyExist(),
+	checkIfATurnWithSameDateExist(),
 	editTurn
 );
 turnsRouter.delete('/:id', deleteTurnById);
