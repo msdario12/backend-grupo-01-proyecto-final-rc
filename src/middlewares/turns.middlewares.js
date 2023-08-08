@@ -82,11 +82,23 @@ const checkIfATurnWithSameDateExist = () => {
 			const turnData = matchedData(req);
 			const endDate = addMinutes(parseISO(value), 30);
 			const foundedTurn = await Turn.findOne({
-				date: {
-					$gt: new Date(turnData.date),
-					$lt: endDate,
-				},
-				vet: turnData.vet,
+				$or: [
+					{ date: turnData.date, vet: turnData.vet },
+					{
+						endDate: {
+							$gt: turnData.date,
+							$lt: endDate,
+						},
+						vet: turnData.vet,
+					},
+					{
+						date: {
+							$gt: turnData.date,
+							$lt: endDate,
+						},
+						vet: turnData.vet,
+					},
+				],
 			});
 			if (foundedTurn) {
 				// El turno tiene exactamente la misma fecha de inicio
