@@ -35,7 +35,7 @@ socketIO.on('connection', (socket) => {
 
 // middlewares
 app.use(cors(corsOptions));
-app.use(morgan('combined'));
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
