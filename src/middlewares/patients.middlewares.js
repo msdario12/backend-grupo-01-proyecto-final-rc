@@ -82,7 +82,8 @@ const checkIfEmailHasOriginalValues = async (req, res, next) => {
 		}
 
 		const { firstName, lastName, phone } = foundedUser;
-
+		console.log(foundedUser)
+		console.log(data)
 		if (foundedUser) {
 			const firstNameComparison = firstName == data.firstName;
 			const lastNameComparison = lastName == data.lastName;

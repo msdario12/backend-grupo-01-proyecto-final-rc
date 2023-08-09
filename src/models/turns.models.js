@@ -9,6 +9,11 @@ const turnsSchema = Schema({
 		required: true,
 		min: new Date().toISOString(),
 	},
+	endDate: {
+		type: Date,
+		required: true,
+		min: new Date().toISOString(),
+	},
 	vet: {
 		type: String,
 		required: true,

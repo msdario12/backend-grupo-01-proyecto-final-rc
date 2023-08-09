@@ -17,6 +17,7 @@ const formatPatients = (list) =>
 			name,
 			race,
 			specie,
+			turns: patient?.turns,
 		};
 	});
 
@@ -34,7 +35,7 @@ const createNewPatient = async (req, res, next) => {
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;
 		const foundedUser = await User.findOne({ email: email });
-		
+
 		if (foundedUser) {
 			//Existe usuario
 
@@ -100,7 +101,8 @@ const getPatientByID = async (req, res, next) => {
 			console.log(populate);
 			onePatient = await Patient.findOne({ _id: id })
 				.populate('user_id')
-				.populate('pet_id');
+				.populate('pet_id')
+				.populate('turns');
 		} else {
 			onePatient = await Patient.findOne({ _id: id });
 		}
@@ -174,7 +176,8 @@ const getAllPatients = async (req, res, next) => {
 		}
 		const allPatients = await Patient.find()
 			.populate('user_id')
-			.populate('pet_id');
+			.populate('pet_id')
+			.populate('turns');
 
 		res.status(200).json({
 			success: true,

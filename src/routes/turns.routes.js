@@ -8,8 +8,10 @@ const {
 } = require('../controllers/turns.controllers');
 const {
 	newTurnValidator,
-	checkIfPatientAndDateAlreadyExist,
+	checkIfATurnWithSameDateExist,
+	checkIfDateIsNew,
 } = require('../middlewares/turns.middlewares');
+const { body } = require('express-validator');
 
 const turnsRouter = Router();
 
@@ -18,13 +20,14 @@ turnsRouter.get('/', getAllTurns);
 turnsRouter.post(
 	'/',
 	newTurnValidator(),
-	checkIfPatientAndDateAlreadyExist(),
+	checkIfATurnWithSameDateExist(),
 	createTurn
 );
 turnsRouter.put(
 	'/:id',
 	newTurnValidator(),
-	checkIfPatientAndDateAlreadyExist(),
+	checkIfATurnWithSameDateExist(),
+	checkIfDateIsNew,
 	editTurn
 );
 turnsRouter.delete('/:id', deleteTurnById);
