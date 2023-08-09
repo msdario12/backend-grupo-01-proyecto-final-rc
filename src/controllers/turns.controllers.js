@@ -95,6 +95,29 @@ const createTurn = async (req, res, next) => {
 
 const getAllTurns = async (req, res, next) => {
 	try {
+		const { patientID } = req.query;
+		if (patientID) {
+			const allTurns = await Turn.find({ patient_id: patientID })
+				.populate({
+					path: 'patient_id',
+					populate: {
+						path: 'user_id pet_id',
+						select: 'name firstName lastName specie',
+						options: { _recursed: true },
+					},
+				})
+				.lean()
+				.exec();
+
+			const flattenTurns = allTurns.map((turn, index) =>
+				flatten({ ...turn, index: index + 1 })
+			);
+
+			return res.status(200).json({
+				success: true,
+				data: flattenTurns,
+			});
+		}
 		const allTurns = await Turn.find({})
 			.populate({
 				path: 'patient_id',
