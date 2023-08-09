@@ -1,4 +1,6 @@
+const { validationResult, matchedData } = require('express-validator');
 const { User } = require('../models/users.models');
+const bcrypt = require('bcrypt');
 
 const getUserByEmail = async (req, res, next) => {
 	try {

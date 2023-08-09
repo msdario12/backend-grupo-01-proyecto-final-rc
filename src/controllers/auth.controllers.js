@@ -1,5 +1,7 @@
 const { User } = require('../models/users.models');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { validationResult, matchedData } = require('express-validator');
 
 const validateToken = async (req, res, next) => {
 	try {
@@ -31,8 +33,13 @@ const handleLogin = async (req, res, next) => {
 			return;
 		}
 
+		const isPasswordMatch = await bcrypt.compare(
+			password,
+			foundedUser.password
+		);
+
 		// Falta agregar la comparación con hash
-		if (foundedUser.password !== password) {
+		if (!isPasswordMatch) {
 			res.status(200).json({
 				success: false,
 				message: 'Contraseña incorrecta',
@@ -74,4 +81,39 @@ const handleLogin = async (req, res, next) => {
 	}
 };
 
-module.exports = { handleLogin, validateToken };
+const handleSignUp = async (req, res, next) => {
+	try {
+		let errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+		// Trabajar con los datos saneados del express validator
+		const data = matchedData(req);
+
+		const { email, password } = data;
+
+		// Validar si el email existe en la base de datos
+		let user = await User.findOne({ email });
+
+		if (user) {
+			return res
+				.status(400)
+				.json({ msg: 'El correo ya se encuentra registrado en el sitio' });
+		}
+
+		user = new User(data);
+
+		// Hashear contraseña
+		const salt = await bcrypt.genSalt(10);
+		user.password = await bcrypt.hash(password, salt);
+		// Store hash in your password DB.
+		user.role = 'admin';
+		await user.save();
+		return res.status(201).json({ success: true, data: user });
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = { handleLogin, validateToken, handleSignUp };
