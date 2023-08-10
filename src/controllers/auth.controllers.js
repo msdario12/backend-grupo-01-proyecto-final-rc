@@ -28,7 +28,7 @@ const handleLogin = async (req, res, next) => {
 		if (!foundedUser) {
 			res.status(200).json({
 				success: false,
-				message: 'Correo no encontrado',
+				message: 'Correo o contraseña incorrecta',
 			});
 			return;
 		}
@@ -42,7 +42,7 @@ const handleLogin = async (req, res, next) => {
 		if (!isPasswordMatch) {
 			res.status(200).json({
 				success: false,
-				message: 'Contraseña incorrecta',
+				message: 'Correo o contraseña incorrecta',
 			});
 			return;
 		}
@@ -50,7 +50,7 @@ const handleLogin = async (req, res, next) => {
 		if (foundedUser.role !== 'admin') {
 			res.status(200).json({
 				success: false,
-				message: 'El usuario no tiene los permisos necesarios',
+				message: 'Correo o contraseña incorrecta',
 			});
 			return;
 		}
