@@ -40,7 +40,7 @@ turnsSchema.pre('findOneAndDelete', async function () {
 	const turn = await Turn.findOne({ _id: turnId });
 	const patient = await Patient.findById(turn.patient_id);
 	// podemos asegurar que existe un paciente con ese id
-	if (patient.turns) {
+	if (patient?.turns) {
 		// sacamos del array de turnos del paciente el turno que se esta eliminando
 		patient.turns.pull(turnId);
 		await patient.save();

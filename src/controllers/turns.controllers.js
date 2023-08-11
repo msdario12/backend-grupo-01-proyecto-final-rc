@@ -182,7 +182,9 @@ const deleteTurnById = async (req, res, next) => {
 		// Leemos el job existente para cambiar el estado
 		const existingJob = schedule.scheduledJobs[deletedTurn._id];
 		// Cancelamos dicho job
-		existingJob.cancel();
+		if (existingJob) {
+			existingJob.cancel();
+		}
 		res.status(200).json({
 			success: true,
 			data: deletedTurn,
