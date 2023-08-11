@@ -23,14 +23,12 @@ const formatPatients = (list) =>
 
 const createNewPatient = async (req, res, next) => {
 	let errors = validationResult(req);
-	console.log('esto es body', req.body);
 	if (!errors.isEmpty()) {
 		console.log(errors.array());
 		return res.status(400).json({ errors: errors.array() });
 	}
 	// Trabajar con los datos saneados del express validator
 	const data = matchedData(req);
-	console.log('esto es data', data);
 
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;

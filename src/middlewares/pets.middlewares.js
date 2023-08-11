@@ -1,5 +1,6 @@
 const { body } = require('express-validator');
 const { Pet } = require('../models/pets.models');
+const { validSpecies } = require('./patients.middlewares');
 
 const newPetValidator = () => {
 	const inputNames = [
