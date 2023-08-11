@@ -7,6 +7,7 @@ const areIntervalsOverlapping = require('date-fns/areIntervalsOverlapping');
 const parseISO = require('date-fns/parseISO');
 const addMinutes = require('date-fns/addMinutes');
 const { scheduledJobs } = require('node-schedule');
+const { isAfter } = require('date-fns');
 
 const validStatus = [
 	'pending',
@@ -59,10 +60,11 @@ const newTurnValidator = () => {
 					if (foundedTurn.date.toISOString() === value) {
 						return true;
 					}
-					return body('date').isAfter();
 				}
-				return body('date').isAfter();
+				return true
 			})
+			.withMessage('Id del turno incorrecto')
+			.isAfter()
 			.withMessage('No puede ser una fecha pasada')
 			.isISO8601()
 			.withMessage('Fecha invalida')
