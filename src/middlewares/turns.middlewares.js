@@ -52,7 +52,17 @@ const newTurnValidator = () => {
 			.not()
 			.isEmpty()
 			.withMessage('Date es un campo obligatorio.')
-			.isAfter()
+			.custom(async (value, { req }) => {
+				if (req.method === 'PUT') {
+					const { id } = req.params;
+					const foundedTurn = await Turn.findById(id);
+					if (foundedTurn.date.toISOString() === value) {
+						return true;
+					}
+					return body('date').isAfter();
+				}
+				return body('date').isAfter();
+			})
 			.withMessage('No puede ser una fecha pasada')
 			.isISO8601()
 			.withMessage('Fecha invalida')

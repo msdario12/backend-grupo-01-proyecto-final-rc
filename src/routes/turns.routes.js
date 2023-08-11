@@ -11,24 +11,26 @@ const {
 	checkIfATurnWithSameDateExist,
 	checkIfDateIsNew,
 } = require('../middlewares/turns.middlewares');
-const { body } = require('express-validator');
+const { body, check } = require('express-validator');
 
 const turnsRouter = Router();
 
 turnsRouter.get('/:id', getTurnById);
 turnsRouter.get('/', getAllTurns);
+
+turnsRouter.put(
+	'/:id',
+	check('id').notEmpty().withMessage('no se provee id'),
+	newTurnValidator(),
+	checkIfATurnWithSameDateExist(),
+	checkIfDateIsNew,
+	editTurn
+);
 turnsRouter.post(
 	'/',
 	newTurnValidator(),
 	checkIfATurnWithSameDateExist(),
 	createTurn
-);
-turnsRouter.put(
-	'/:id',
-	newTurnValidator(),
-	checkIfATurnWithSameDateExist(),
-	checkIfDateIsNew,
-	editTurn
 );
 turnsRouter.delete('/:id', deleteTurnById);
 
