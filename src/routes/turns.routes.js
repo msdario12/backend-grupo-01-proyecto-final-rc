@@ -22,8 +22,8 @@ turnsRouter.put(
 	'/:id',
 	check('id').notEmpty().withMessage('no se provee id'),
 	newTurnValidator(),
-	checkIfATurnWithSameDateExist(),
 	checkIfDateIsNew,
+	checkIfATurnWithSameDateExist(),
 	editTurn
 );
 turnsRouter.post(

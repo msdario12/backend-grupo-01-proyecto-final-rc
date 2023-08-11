@@ -101,14 +101,35 @@ const checkIfATurnWithSameDateExist = () => {
 	return [
 		body('date').custom(async (value, { req }) => {
 			const turnData = matchedData(req);
-			const endDate = addMinutes(parseISO(value), 30);
+			let endDate;
+			if (!req.endDate) {
+				endDate = addMinutes(parseISO(value), 30);
+			}
+			endDate = req.endDate;
+			console.log('end date', endDate);
 			const foundedTurn = await Turn.findOne({
 				$or: [
-					{ date: turnData.date, vet: turnData.vet },
+					{
+						endDate: endDate,
+						vet: turnData.vet,
+						_id: {
+							$ne: turnData.id
+						}
+					},
+					{
+						date: turnData.date,
+						vet: turnData.vet,
+						_id: {
+							$ne: turnData.id
+						}
+					},
 					{
 						endDate: {
 							$gt: turnData.date,
 							$lt: endDate,
+						},
+						_id: {
+							$ne: turnData.id
 						},
 						vet: turnData.vet,
 					},
@@ -117,11 +138,16 @@ const checkIfATurnWithSameDateExist = () => {
 							$gt: turnData.date,
 							$lt: endDate,
 						},
+						_id: {
+							$ne: turnData.id
+						},
 						vet: turnData.vet,
 					},
 				],
 			});
-			if (foundedTurn && foundedTurn.patient_id == matchedData.patient_id) {
+			console.log('fundo encontrado', foundedTurn);
+			console.log('turno actual', turnData);
+			if (foundedTurn) {
 				// El turno tiene exactamente la misma fecha de inicio
 				throw new Error('Ya existe un turno con la misma fecha');
 			}
@@ -137,14 +163,12 @@ const checkIfDateIsNew = async (req, res, next) => {
 		const { id } = req.params;
 
 		const originalTurn = await Turn.findById(id);
-		console.log('Middleware', id);
-		// Vemos si se cambio la fecha
 		// Vemos si se cambio la fecha
 		console.log(originalTurn.date.toISOString());
 		console.log(turnData.date);
-		if (turnData.date != originalTurn.date) {
+		if (turnData.date !== originalTurn.date) {
 			// Leemos el job existente para cambiar el estado
-
+			console.log('La fecha se cambio');
 			const existingJob = scheduledJobs[String(id)];
 			const newDate = new Date(turnData.date);
 			// Cambiamos la fecha de dicho job
@@ -152,7 +176,7 @@ const checkIfDateIsNew = async (req, res, next) => {
 				existingJob.reschedule(newDate);
 			}
 			// actualizamos la fecha del turno
-			const endDate = addMinutes(parseISO(turnData.date), 30);
+			const endDate = addMinutes(newDate, 30);
 			req.endDate = endDate.toISOString();
 		}
 		next();
