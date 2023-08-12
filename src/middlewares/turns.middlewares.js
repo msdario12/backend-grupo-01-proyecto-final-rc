@@ -112,7 +112,7 @@ const checkIfATurnWithSameDateExist = () => {
 			const foundedTurn = await Turn.findOne({
 				$or: [
 					{
-						endDate: endDate,
+						endDate,
 						vet: turnData.vet,
 						_id: {
 							$ne: turnData.id

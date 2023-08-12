@@ -14,7 +14,7 @@ const app = express();
 // creamos un nuevo httpserver para app y io
 const server = require('http').createServer(app);
 
-//pasamos el server para crear la instancia de socketIO
+// pasamos el server para crear la instancia de socketIO
 const socketIO = require('socket.io')(server, {
 	cors: corsOptions,
 });

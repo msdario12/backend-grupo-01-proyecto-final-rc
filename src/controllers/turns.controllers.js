@@ -10,7 +10,7 @@ const editTurn = async (req, res, next) => {
 	try {
 		const { id } = req.params;
 
-		let errors = validationResult(req);
+		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			console.log(errors.array());
 			return res.status(400).json({ errors: errors.array() });
@@ -43,7 +43,7 @@ const editTurn = async (req, res, next) => {
 
 const createTurn = async (req, res, next) => {
 	try {
-		let errors = validationResult(req);
+		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			console.log(errors.array());
 			return res.status(400).json({ errors: errors.array() });

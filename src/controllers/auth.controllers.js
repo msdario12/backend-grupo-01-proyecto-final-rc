@@ -9,9 +9,9 @@ const validateToken = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			message: 'Token válido',
-			firstName: firstName,
-			role: role,
-			email: email,
+			firstName,
+			role,
+			email,
 		});
 	} catch (error) {
 		next(error);
@@ -24,7 +24,7 @@ const handleLogin = async (req, res, next) => {
 
 		console.log(email);
 
-		const foundedUser = await User.findOne({ email: email });
+		const foundedUser = await User.findOne({ email });
 		if (!foundedUser) {
 			res.status(200).json({
 				success: false,
@@ -71,7 +71,7 @@ const handleLogin = async (req, res, next) => {
 		res.status(200).json({
 			success: true,
 			message: 'Autenticación correcta',
-			accessToken: accessToken,
+			accessToken,
 			firstName: foundedUser.firstName,
 			role: foundedUser.role,
 			email: foundedUser.email,
@@ -83,7 +83,7 @@ const handleLogin = async (req, res, next) => {
 
 const handleSignUp = async (req, res, next) => {
 	try {
-		let errors = validationResult(req);
+		const errors = validationResult(req);
 		if (!errors.isEmpty()) {
 			console.log(errors.array());
 			return res.status(400).json({ errors: errors.array() });
