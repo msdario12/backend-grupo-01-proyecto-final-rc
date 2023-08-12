@@ -32,10 +32,31 @@ const getGeneralStatistics = async (req, res, next) => {
 		const pendingTurns = await Turn.find({
 			status: 'pending',
 		}).count();
+		const nextTurns = await Turn.find({
+			status: 'pending',
+		})
+			.sort({
+				date: 1,
+			})
+			.select('date')
+			.populate({
+				path: 'patient_id',
+				strictPopulate: false,
+				select: 'pet_id',
+				populate: {
+					path: 'pet_id',
+					select: 'name specie',
+				},
+				perDocumentLimit: 2,
+			})
+			.limit(2);
+
+		// objeto para enviar
 		const statisticsData = {
 			totalTurns,
 			completedTurns,
 			pendingTurns,
+			nextTurns,
 		};
 
 		res.status(200).json({
