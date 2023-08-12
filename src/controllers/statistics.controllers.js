@@ -1,3 +1,5 @@
+const { Turn } = require('../models/turns.models');
+
 /* FORMATO DE LA RESPUESTA
 data = {
     totalTurns: 245,
@@ -21,19 +23,20 @@ data = {
 }
 */
 
-const getGeneralStatistics = (req, res, next) => {
-  try {
-    const statisticsData = {
+const getGeneralStatistics = async (req, res, next) => {
+	try {
+		const totalTurns = await Turn.find({}).count();
+		const statisticsData = {
+			totalTurns,
+		};
 
-    }
+		res.status(200).json({
+			success: true,
+			data: statisticsData,
+		});
+	} catch (error) {
+		next(error);
+	}
+};
 
-    res.status(200).json({
-      success: true,
-      data: statisticsData
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
-module.exports = { getGeneralStatistics }
+module.exports = { getGeneralStatistics };
