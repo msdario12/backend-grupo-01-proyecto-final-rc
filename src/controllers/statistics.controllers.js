@@ -26,8 +26,12 @@ data = {
 const getGeneralStatistics = async (req, res, next) => {
 	try {
 		const totalTurns = await Turn.find({}).count();
+		const completedTurns = await Turn.find({
+			status: 'completed',
+		}).count();
 		const statisticsData = {
 			totalTurns,
+			completedTurns,
 		};
 
 		res.status(200).json({
