@@ -9,6 +9,6 @@ const {
 const petsRouter = Router();
 
 petsRouter.get('/:id', getPetByID);
-petsRouter.put('/:id', newPetValidator(), checkIfAPetAlreadyExist, editPetByID);
+petsRouter.put('/:id', newPetValidator(), editPetByID);
 
 module.exports = { petsRouter };
