@@ -1,6 +1,7 @@
 const { addDays } = require('date-fns');
 const { Turn } = require('../models/turns.models');
 const startOfWeek = require('date-fns/startOfWeek');
+const { Pet } = require('../models/pets.models');
 /* FORMATO DE LA RESPUESTA
 data = {
     totalTurns: 245,
@@ -57,9 +58,28 @@ const getGeneralStatistics = async (req, res, next) => {
 		const patientsSeenInWeek = await Turn.find({
 			date: {
 				$gt: startDayOfTheWeek,
-				$lt:new Date()
+				$lt: new Date(),
 			},
 		}).count();
+		// Mascota más habitual
+		const mostCommonSpecie = await Pet.aggregate([
+			{
+				$group: {
+					_id: '$specie',
+					count: {
+						$sum: 1,
+					},
+				},
+			},
+			{
+				$sort: {
+					count: -1,
+				},
+			},
+			{
+				$limit: 1,
+			},
+		]).exec();
 
 		const statisticsData = {
 			totalTurns,
@@ -67,6 +87,7 @@ const getGeneralStatistics = async (req, res, next) => {
 			pendingTurns,
 			nextTurns,
 			patientsSeenInWeek,
+			mostCommonSpecie,
 		};
 
 		res.status(200).json({
