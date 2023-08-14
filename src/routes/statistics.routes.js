@@ -1,10 +1,10 @@
-const { Router } = require('express')
+const { Router } = require('express');
 const {
-  getGeneralStatistics
-} = require('../controllers/statistics.controllers')
+	getGeneralStatistics,
+} = require('../controllers/statistics.controllers');
 
-const statisticsRouter = Router()
+const statisticsRouter = Router();
 
-statisticsRouter.get('/', getGeneralStatistics)
+statisticsRouter.get('/', getGeneralStatistics);
 
-module.exports = { statisticsRouter }
+module.exports = { statisticsRouter };

@@ -5,7 +5,6 @@ const {
 	editUserByID,
 	getUserByID,
 } = require('../controllers/users.controllers');
-const { authJwt } = require('../middlewares/authJwt.middlewares');
 const {
 	checkIfEmailAlreadyExist,
 	newUserValidator,
@@ -13,11 +12,10 @@ const {
 
 const usersRouter = Router();
 
-usersRouter.get('/', authJwt, getUserByEmail);
-usersRouter.get('/:id', authJwt, getUserByID);
+usersRouter.get('/', getUserByEmail);
+usersRouter.get('/:id', getUserByID);
 usersRouter.put(
 	'/:id',
-	authJwt,
 	newUserValidator(),
 	checkIfEmailAlreadyExist,
 	editUserByID

@@ -6,18 +6,20 @@ const { petsRouter } = require('./pets.routes');
 const { authRouter } = require('./auth.routes');
 const { turnsRouter } = require('./turns.routes');
 const { statisticsRouter } = require('./statistics.routes');
+const { authJwt } = require('../middlewares/authJwt.middlewares');
 
 // aca van todas las rutas para ser exportadas
 const router = Router();
 
-// rutas
-router.use('/auth', authRouter);
+// rutas sin protección
 router.use('/weather', weatherRouter);
-router.use('/patients', patientsRouter);
-router.use('/users', usersRouter);
-router.use('/pets', petsRouter);
-router.use('/turns', turnsRouter);
-router.use('/statistics', statisticsRouter);
+router.use('/auth', authRouter);
+// rutas protegidas por jwt
+router.use('/patients', authJwt, patientsRouter);
+router.use('/pets', authJwt, petsRouter);
+router.use('/statistics', authJwt, statisticsRouter);
+router.use('/turns', authJwt, turnsRouter);
+router.use('/users', authJwt, usersRouter);
 
 // exportación
 module.exports = { router };

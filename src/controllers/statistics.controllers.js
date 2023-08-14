@@ -3,28 +3,6 @@ const { Turn } = require('../models/turns.models');
 const startOfWeek = require('date-fns/startOfWeek');
 const { Pet } = require('../models/pets.models');
 const { Patient } = require('../models/patients.models');
-/* FORMATO DE LA RESPUESTA
-data = {
-    totalTurns: 245,
-    completedTurns: 23,
-    pendingTurns: 242,
-    firstNextTurn: {
-        date: ,
-        name: ,
-        specie,
-
-    },
-    secondNextTurn: {
-        date: ,
-        name: ,
-        specie,
-
-    },
-    patientsSeenInWeek: 24,
-    mostCommonSpecie: 'Perro',
-    totalRegisteredPatients: 242,
-}
-*/
 
 const getGeneralStatistics = async (req, res, next) => {
 	try {
