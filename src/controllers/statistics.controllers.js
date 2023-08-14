@@ -2,6 +2,7 @@ const { addDays } = require('date-fns');
 const { Turn } = require('../models/turns.models');
 const startOfWeek = require('date-fns/startOfWeek');
 const { Pet } = require('../models/pets.models');
+const { Patient } = require('../models/patients.models');
 /* FORMATO DE LA RESPUESTA
 data = {
     totalTurns: 245,
@@ -80,6 +81,8 @@ const getGeneralStatistics = async (req, res, next) => {
 				$limit: 1,
 			},
 		]).exec();
+		// total de pacientes
+		const totalRegisteredPatients = await Patient.find({}).count();
 
 		const statisticsData = {
 			totalTurns,
@@ -88,6 +91,7 @@ const getGeneralStatistics = async (req, res, next) => {
 			nextTurns,
 			patientsSeenInWeek,
 			mostCommonSpecie,
+			totalRegisteredPatients,
 		};
 
 		res.status(200).json({
