@@ -5,7 +5,7 @@ const {
 	getPatientByID,
 	deletePatientByID,
 } = require('../controllers/patients.controllers');
-const { authJwt, isAdmin } = require('../middlewares/authJwt.middlewares');
+const { isAdmin } = require('../middlewares/authJwt.middlewares');
 const {
 	newPatientValidator,
 	checkIfEmailHasOriginalValues,
@@ -13,18 +13,17 @@ const {
 const { checkIfAPetAlreadyExist } = require('../middlewares/pets.middlewares');
 
 const patientsRouter = Router();
-// authJwt, isAdmin,
-patientsRouter.get('/', authJwt, getAllPatients);
-patientsRouter.get('/:id', authJwt, getPatientByID);
+//  isAdmin,
+patientsRouter.get('/', getAllPatients);
+patientsRouter.get('/:id', getPatientByID);
 patientsRouter.post(
 	'/',
-	authJwt,
 	newPatientValidator(),
 	checkIfAPetAlreadyExist,
 	checkIfEmailHasOriginalValues,
 	createNewPatient
 );
-patientsRouter.delete('/:id', authJwt, deletePatientByID);
+patientsRouter.delete('/:id', deletePatientByID);
 
 module.exports = {
 	patientsRouter,

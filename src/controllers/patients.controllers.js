@@ -22,7 +22,7 @@ const formatPatients = (list) =>
 	});
 
 const createNewPatient = async (req, res, next) => {
-	let errors = validationResult(req);
+	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		console.log(errors.array());
 		return res.status(400).json({ errors: errors.array() });
@@ -32,10 +32,10 @@ const createNewPatient = async (req, res, next) => {
 
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;
-		const foundedUser = await User.findOne({ email: email });
+		const foundedUser = await User.findOne({ email });
 
 		if (foundedUser) {
-			//Existe usuario
+			// Existe usuario
 
 			// Creamos nueva mascota
 			const newPet = await Pet.create({

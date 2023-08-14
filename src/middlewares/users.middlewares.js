@@ -7,7 +7,7 @@ const newUserValidator = () => {
 		{ title: 'Apellido', name: 'lastName' },
 	];
 
-	let validatorList = inputNames.map((el) =>
+	const validatorList = inputNames.map((el) =>
 		body(el.name)
 			.toLowerCase()
 			.trim()

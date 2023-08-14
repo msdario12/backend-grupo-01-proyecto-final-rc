@@ -8,13 +8,7 @@ const {
 
 const petsRouter = Router();
 
-petsRouter.get('/:id', authJwt, getPetByID);
-petsRouter.put(
-	'/:id',
-	authJwt,
-	newPetValidator(),
-	checkIfAPetAlreadyExist,
-	editPetByID
-);
+petsRouter.get('/:id', getPetByID);
+petsRouter.put('/:id', newPetValidator(), checkIfAPetAlreadyExist, editPetByID);
 
 module.exports = { petsRouter };
