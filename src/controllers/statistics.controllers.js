@@ -1,5 +1,6 @@
+const { addDays } = require('date-fns');
 const { Turn } = require('../models/turns.models');
-
+const startOfWeek = require('date-fns/startOfWeek');
 /* FORMATO DE LA RESPUESTA
 data = {
     totalTurns: 245,
@@ -50,13 +51,22 @@ const getGeneralStatistics = async (req, res, next) => {
 				perDocumentLimit: 2,
 			})
 			.limit(2);
+		// obtenemos la semana actual
+		const startDayOfTheWeek = startOfWeek(new Date());
+		console.log(startDayOfTheWeek);
+		const patientsSeenInWeek = await Turn.find({
+			date: {
+				$gt: startDayOfTheWeek,
+				$lt:new Date()
+			},
+		}).count();
 
-		// objeto para enviar
 		const statisticsData = {
 			totalTurns,
 			completedTurns,
 			pendingTurns,
 			nextTurns,
+			patientsSeenInWeek,
 		};
 
 		res.status(200).json({
