@@ -2,6 +2,7 @@ const { Pet } = require('../models/pets.models');
 const { User } = require('../models/users.models');
 const { Patient } = require('../models/patients.models');
 const { validationResult, matchedData } = require('express-validator');
+const { Turn } = require('../models/turns.models');
 
 const formatPatients = (list) =>
 	list.map((patient, index) => {
@@ -189,8 +190,12 @@ const getAllPatients = async (req, res, next) => {
 const deletePatientByID = async (req, res, next) => {
 	const { id } = req.params;
 	try {
+		// Ver si el paciente tiene turnos
+		const foundedTurn = await Turn.find({ patient_id: id });
+		if (foundedTurn) {
+			await Turn.deleteMany({ _id: [...foundedTurn.map((turn) => turn._id)] });
+		}
 		const deletedPatient = await Patient.findOneAndDelete({ _id: id });
-
 		if (!deletedPatient) {
 			res.status(400).json({
 				success: false,
@@ -201,7 +206,6 @@ const deletePatientByID = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			data: deletedPatient,
 		});
 	} catch (error) {
 		next(error);
