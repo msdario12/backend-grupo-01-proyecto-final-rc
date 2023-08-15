@@ -33,7 +33,7 @@ const newPatientValidator = () => {
 			.withMessage(el.title + ' solo tipo string')
 			.isLength({ min: 3, max: 35 })
 			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
-			.matches(/^[a-zA-Z0-9]*$/)
+			.matches(/^[\w\-\s]+$/)
 			.withMessage(el.title + ' solo acepta letras y números.')
 			.escape()
 	);

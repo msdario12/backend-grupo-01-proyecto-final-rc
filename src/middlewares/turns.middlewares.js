@@ -3,7 +3,6 @@ const { body, check, matchedData } = require('express-validator');
 const { default: mongoose } = require('mongoose');
 const { Patient } = require('../models/patients.models');
 const { Turn } = require('../models/turns.models');
-const areIntervalsOverlapping = require('date-fns/areIntervalsOverlapping');
 const parseISO = require('date-fns/parseISO');
 const addMinutes = require('date-fns/addMinutes');
 const { scheduledJobs } = require('node-schedule');
@@ -30,7 +29,7 @@ const newTurnValidator = () => {
 			.withMessage(el + ' es un campo obligatorio.')
 			.isString()
 			.withMessage(el + ' solo tipo string')
-			.isAlphanumeric('es-ES')
+			.matches(/^[,.\w\-\s]+$/)
 			.withMessage(el + ' solo acepta letras o números')
 			.escape()
 	);
@@ -61,7 +60,7 @@ const newTurnValidator = () => {
 						return true;
 					}
 				}
-				return true
+				return true;
 			})
 			.withMessage('Id del turno incorrecto')
 			.isAfter()
@@ -115,15 +114,15 @@ const checkIfATurnWithSameDateExist = () => {
 						endDate,
 						vet: turnData.vet,
 						_id: {
-							$ne: turnData.id
-						}
+							$ne: turnData.id,
+						},
 					},
 					{
 						date: turnData.date,
 						vet: turnData.vet,
 						_id: {
-							$ne: turnData.id
-						}
+							$ne: turnData.id,
+						},
 					},
 					{
 						endDate: {
@@ -131,7 +130,7 @@ const checkIfATurnWithSameDateExist = () => {
 							$lt: endDate,
 						},
 						_id: {
-							$ne: turnData.id
+							$ne: turnData.id,
 						},
 						vet: turnData.vet,
 					},
@@ -141,7 +140,7 @@ const checkIfATurnWithSameDateExist = () => {
 							$lt: endDate,
 						},
 						_id: {
-							$ne: turnData.id
+							$ne: turnData.id,
 						},
 						vet: turnData.vet,
 					},
