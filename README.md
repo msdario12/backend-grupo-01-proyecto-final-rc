@@ -11,3 +11,5 @@ Backend del proyecto final del grupo 1 del curso de programación fullstack de R
 *  express-validator
 *  jsonwebtoken
 *  node-shedule
+*  socket-io
+*  date-fns
