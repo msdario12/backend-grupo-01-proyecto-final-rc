@@ -1,3 +1,4 @@
+const { validationResult, matchedData } = require('express-validator');
 const { Pet } = require('../models/pets.models');
 
 const getPetByID = async (req, res, next) => {
@@ -24,7 +25,14 @@ const editPetByID = async (req, res, next) => {
 	const { id } = req.params;
 
 	try {
-		const onePet = await Pet.findOneAndUpdate({ _id: id }, req.body, {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+		// Trabajar con los datos saneados del express validator
+		const data = matchedData(req);
+		const onePet = await Pet.findOneAndUpdate({ _id: id }, data, {
 			new: true,
 		});
 

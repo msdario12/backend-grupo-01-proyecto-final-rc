@@ -1,5 +1,6 @@
 const { body } = require('express-validator');
 const { Pet } = require('../models/pets.models');
+const { validSpecies } = require('./patients.middlewares');
 
 const newPetValidator = () => {
 	const inputNames = [
@@ -7,7 +8,7 @@ const newPetValidator = () => {
 		{ title: 'Raza', name: 'race' },
 	];
 
-	let validatorList = inputNames.map((el) =>
+	const validatorList = inputNames.map((el) =>
 		body(el.name)
 			.toLowerCase()
 			.trim()
@@ -18,7 +19,7 @@ const newPetValidator = () => {
 			.withMessage(el.title + ' solo tipo string')
 			.isLength({ min: 3, max: 35 })
 			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
-			.matches(/^[a-zA-Z0-9]*$/)
+			.matches(/^[\w\-\s]+$/)
 			.withMessage(el.title + ' solo acepta letras y números.')
 			.escape()
 	);

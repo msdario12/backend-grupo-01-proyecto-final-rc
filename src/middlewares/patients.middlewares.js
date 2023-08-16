@@ -22,7 +22,7 @@ const newPatientValidator = () => {
 		{ title: 'Raza', name: 'race' },
 	];
 
-	let validatorList = inputNames.map((el) =>
+	const validatorList = inputNames.map((el) =>
 		body(el.name)
 			.toLowerCase()
 			.trim()
@@ -33,7 +33,7 @@ const newPatientValidator = () => {
 			.withMessage(el.title + ' solo tipo string')
 			.isLength({ min: 3, max: 35 })
 			.withMessage(el.title + ' debe ser mayor a 3 caracteres y menor que 35.')
-			.matches(/^[a-zA-Z0-9]*$/)
+			.matches(/^[\w\-\s]+$/)
 			.withMessage(el.title + ' solo acepta letras y números.')
 			.escape()
 	);
@@ -82,8 +82,8 @@ const checkIfEmailHasOriginalValues = async (req, res, next) => {
 		}
 
 		const { firstName, lastName, phone } = foundedUser;
-		console.log(foundedUser)
-		console.log(data)
+		console.log(foundedUser);
+		console.log(data);
 		if (foundedUser) {
 			const firstNameComparison = firstName == data.firstName;
 			const lastNameComparison = lastName == data.lastName;
@@ -103,4 +103,8 @@ const checkIfEmailHasOriginalValues = async (req, res, next) => {
 	}
 };
 
-module.exports = { newPatientValidator, checkIfEmailHasOriginalValues };
+module.exports = {
+	newPatientValidator,
+	checkIfEmailHasOriginalValues,
+	validSpecies,
+};

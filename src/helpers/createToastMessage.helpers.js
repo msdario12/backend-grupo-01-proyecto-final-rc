@@ -1,7 +1,7 @@
 const createToastMessage = (variant, message) => {
 	return {
-		message: message,
-		variant: variant,
+		message,
+		variant,
 	};
 };
 

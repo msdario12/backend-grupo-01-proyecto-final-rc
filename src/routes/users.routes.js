@@ -5,15 +5,20 @@ const {
 	editUserByID,
 	getUserByID,
 } = require('../controllers/users.controllers');
-const { authJwt } = require('../middlewares/authJwt.middlewares');
 const {
 	checkIfEmailAlreadyExist,
+	newUserValidator,
 } = require('../middlewares/users.middlewares');
 
 const usersRouter = Router();
 
-usersRouter.get('/', authJwt, getUserByEmail);
-usersRouter.get('/:id', authJwt, getUserByID);
-usersRouter.put('/:id', authJwt, checkIfEmailAlreadyExist, editUserByID);
+usersRouter.get('/', getUserByEmail);
+usersRouter.get('/:id', getUserByID);
+usersRouter.put(
+	'/:id',
+	newUserValidator(),
+	checkIfEmailAlreadyExist,
+	editUserByID
+);
 
 module.exports = { usersRouter };

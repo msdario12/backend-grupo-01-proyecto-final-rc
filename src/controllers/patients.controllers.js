@@ -2,6 +2,7 @@ const { Pet } = require('../models/pets.models');
 const { User } = require('../models/users.models');
 const { Patient } = require('../models/patients.models');
 const { validationResult, matchedData } = require('express-validator');
+const { Turn } = require('../models/turns.models');
 
 const formatPatients = (list) =>
 	list.map((patient, index) => {
@@ -22,22 +23,20 @@ const formatPatients = (list) =>
 	});
 
 const createNewPatient = async (req, res, next) => {
-	let errors = validationResult(req);
-	console.log('esto es body', req.body);
+	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		console.log(errors.array());
 		return res.status(400).json({ errors: errors.array() });
 	}
 	// Trabajar con los datos saneados del express validator
 	const data = matchedData(req);
-	console.log('esto es data', data);
 
 	try {
 		const { firstName, lastName, email, phone, name, specie, race } = data;
-		const foundedUser = await User.findOne({ email: email });
+		const foundedUser = await User.findOne({ email });
 
 		if (foundedUser) {
-			//Existe usuario
+			// Existe usuario
 
 			// Creamos nueva mascota
 			const newPet = await Pet.create({
@@ -191,8 +190,12 @@ const getAllPatients = async (req, res, next) => {
 const deletePatientByID = async (req, res, next) => {
 	const { id } = req.params;
 	try {
+		// Ver si el paciente tiene turnos
+		const foundedTurn = await Turn.find({ patient_id: id });
+		if (foundedTurn) {
+			await Turn.deleteMany({ _id: [...foundedTurn.map((turn) => turn._id)] });
+		}
 		const deletedPatient = await Patient.findOneAndDelete({ _id: id });
-
 		if (!deletedPatient) {
 			res.status(400).json({
 				success: false,
@@ -203,7 +206,6 @@ const deletePatientByID = async (req, res, next) => {
 
 		res.status(200).json({
 			success: true,
-			data: deletedPatient,
 		});
 	} catch (error) {
 		next(error);

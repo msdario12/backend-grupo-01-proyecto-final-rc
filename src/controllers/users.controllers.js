@@ -49,11 +49,16 @@ const getUserByID = async (req, res, next) => {
 
 const editUserByID = async (req, res, next) => {
 	try {
-		const oneUser = await User.findOneAndUpdate(
-			{ _id: req.params.id },
-			req.body,
-			{ new: true }
-		);
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+		// Trabajar con los datos saneados del express validator
+		const data = matchedData(req);
+		const oneUser = await User.findOneAndUpdate({ _id: req.params.id }, data, {
+			new: true,
+		});
 
 		if (!oneUser) {
 			return res.status(400).json({
