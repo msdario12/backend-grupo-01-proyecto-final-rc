@@ -202,7 +202,7 @@ const createTurnByClient = (req, res, next) => {
       return res.status(400).json({ errors: errors.array() });
     }
     // Trabajar con los datos saneados del express validator
-    const turnData = matchedData(req);
+    const turnAndPatientData = matchedData(req);
   } catch (error) {
     next(error);
   }

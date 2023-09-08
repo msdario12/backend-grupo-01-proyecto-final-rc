@@ -63,7 +63,6 @@ const newTurnValidator = () => {
         return true;
       })
       .withMessage("Id del turno incorrecto")
-
       .isISO8601()
       .withMessage("Fecha invalida"),
   );

@@ -40,7 +40,6 @@ turnsRouter.post(
 );
 turnsRouter.post(
   "/turn-by-client",
-
   newPatientValidator(),
   checkIfAPetAlreadyExist,
   checkIfEmailHasOriginalValues,
