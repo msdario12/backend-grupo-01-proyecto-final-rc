@@ -19,7 +19,6 @@ const validStatus = [
 const newTurnValidator = () => {
   const inputNames = ["vet", "details"];
   let validatorList = [];
-
   validatorList = inputNames.map((el) =>
     body(el)
       .toLowerCase()
@@ -67,22 +66,22 @@ const newTurnValidator = () => {
       .withMessage("Fecha invalida"),
   );
 
-  validatorList.push(
-    body("patient_id")
-      .trim()
-      .not()
-      .isEmpty()
-      .withMessage("patient_id es un campo obligatorio.")
-      .custom((value) => mongoose.isValidObjectId(value))
-      .withMessage("patient_id no es valido.")
-      .custom(async (value, { req }) => {
-        const patient = await Patient.findById(value);
-        if (!patient) {
-          throw new Error("patient_id invalido");
-        }
-        return true;
-      }),
-  );
+  // validatorList.push(
+  //   body("patient_id")
+  //     .trim()
+  //     .not()
+  //     .isEmpty()
+  //     .withMessage("patient_id es un campo obligatorio.")
+  //     .custom((value) => mongoose.isValidObjectId(value))
+  //     .withMessage("patient_id no es valido.")
+  //     .custom(async (value, { req }) => {
+  //       const patient = await Patient.findById(value);
+  //       if (!patient) {
+  //         throw new Error("patient_id invalido");
+  //       }
+  //       return true;
+  //     }),
+  // );
 
   validatorList.push(
     body("status")
@@ -184,8 +183,28 @@ const checkIfDateIsNew = async (req, res, next) => {
   }
 };
 
+const checkPatientId = () => {
+  return [
+    body("patient_id")
+      .trim()
+      .not()
+      .isEmpty()
+      .withMessage("patient_id es un campo obligatorio.")
+      .custom((value) => mongoose.isValidObjectId(value))
+      .withMessage("patient_id no es valido.")
+      .custom(async (value, { req }) => {
+        const patient = await Patient.findById(value);
+        if (!patient) {
+          throw new Error("patient_id invalido");
+        }
+        return true;
+      }),
+  ];
+};
+
 module.exports = {
   newTurnValidator,
   checkIfATurnWithSameDateExist,
   checkIfDateIsNew,
+  checkPatientId,
 };

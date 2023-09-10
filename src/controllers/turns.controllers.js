@@ -5,6 +5,44 @@ const { Patient } = require("../models/patients.models");
 const { createToastMessage } = require("../helpers/createToastMessage.helpers");
 const flatten = require("flat");
 const addMinutes = require("date-fns/addMinutes");
+const { User } = require("../models/users.models");
+const { Pet } = require("../models/pets.models");
+
+const createTurnHelper = async (patientID, turnData) => {
+  // Creamos la fecha del turno media hora despues
+  const endDate = addMinutes(new Date(turnData.date), 30);
+  turnData.endDate = endDate;
+  turnData.patient_id = patientID;
+  const oneTurn = await Turn.create(turnData);
+  // Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
+  // En el front se debera setear el estado de inProgress cuando el paciente llegue.
+  const dateJob = new Date(oneTurn.date);
+
+  // guardamos el turno en el paciente
+  const onePatient = await Patient.findById(patientID)
+    .populate("user_id")
+    .populate("pet_id", "name");
+  // guardamos el job con el identificador igual al id del turno
+  const turnID = String(oneTurn._id);
+  const job = schedule.scheduleJob(turnID, dateJob, function () {
+    try {
+      if (oneTurn.status === "pending") {
+        oneTurn.status = "waitingForPatient";
+        oneTurn.save();
+        const msg = `El turno de ${onePatient.user_id.firstName} ${onePatient.user_id.lastName}, para su mascota ${onePatient.pet_id.name} se cambio al estado de "Esperando paciente"`;
+        io.emit("foo", createToastMessage("success", msg));
+        console.log("Its time", oneTurn);
+        return;
+      }
+      console.log("El turno ya habia sido cambiado de estado");
+    } catch (error) {
+      next(error);
+    }
+  });
+  // agregamos el turno al paciente
+  onePatient.turns.push(oneTurn._id);
+  onePatient.save();
+};
 
 const editTurn = async (req, res, next) => {
   try {
@@ -43,6 +81,7 @@ const editTurn = async (req, res, next) => {
 
 const createTurn = async (req, res, next) => {
   try {
+    console.log("Creando turno");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors.array());
@@ -194,15 +233,83 @@ const deleteTurnById = async (req, res, next) => {
   }
 };
 
-const createTurnByClient = (req, res, next) => {
+const createTurnByClient = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
-    // Trabajar con los datos saneados del express validator
+
     const turnAndPatientData = matchedData(req);
+    console.log(turnAndPatientData);
+
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      name,
+      specie,
+      race,
+      date,
+      vet,
+      details,
+    } = turnAndPatientData;
+
+    const turnData = { date, vet, details };
+
+    const foundedPet = await Pet.findOne({
+      name: name,
+      specie: specie,
+    });
+    if (foundedPet) {
+      const foundedPatient = await Patient.findOne({ pet_id: foundedPet._id });
+      createTurnHelper(foundedPatient._id, turnData);
+      return res.status(201).json({
+        success: true,
+        data: foundedPatient,
+        log: "Mascota ya registrada",
+      });
+    }
+    const foundedUser = await User.findOne({ email });
+    let newPatient;
+    if (foundedUser) {
+      const newPet = await Pet.create({
+        name,
+        specie,
+        race,
+        client_id: foundedUser._id,
+      });
+      foundedUser.pets.push(newPet._id);
+      await foundedUser.save();
+      newPatient = await Patient.create({
+        user_id: foundedUser._id,
+        pet_id: newPet._id,
+      });
+    } else {
+      const newUser = await User.create({ firstName, lastName, email, phone });
+
+      const newPet = await Pet.create({
+        name,
+        specie,
+        race,
+        client_id: newUser._id,
+      });
+      newUser.pets.push(newPet._id);
+
+      await newUser.save();
+
+      newPatient = await Patient.create({
+        user_id: newUser._id,
+        pet_id: newPet._id,
+      });
+    }
+    createTurnHelper(newPatient._id, turnData);
+    return res.status(201).json({
+      success: true,
+      data: newPatient,
+    });
   } catch (error) {
     next(error);
   }
