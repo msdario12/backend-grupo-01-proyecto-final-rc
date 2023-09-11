@@ -37,7 +37,6 @@ const getGeneralStatistics = async (req, res, next) => {
         // obtenemos la semana actual
         const startDayOfTheWeek = startOfWeek(new Date());
         const endDayOfTheWeek = endOfWeek(new Date())
-        console.log(startDayOfTheWeek);
         const patientsSeenInWeek = await Turn.find({
             date: {
                 $gt: startDayOfTheWeek,
