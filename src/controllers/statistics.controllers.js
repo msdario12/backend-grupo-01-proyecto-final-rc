@@ -34,10 +34,8 @@ const getGeneralStatistics = async (req, res, next) => {
                 perDocumentLimit: 2,
             })
             .limit(2);
-        // obtenemos la semana actual
         const startDayOfTheWeek = startOfWeek(new Date());
         const endDayOfTheWeek = endOfWeek(new Date())
-        console.log(startDayOfTheWeek);
         const patientsSeenInWeek = await Turn.find({
             date: {
                 $gt: startDayOfTheWeek,
@@ -45,7 +43,6 @@ const getGeneralStatistics = async (req, res, next) => {
             },
             status: 'completed'
         }).count();
-        // Mascota más habitual
         const mostCommonSpecie = await Pet.aggregate([
             {
                 $group: {
@@ -64,7 +61,6 @@ const getGeneralStatistics = async (req, res, next) => {
                 $limit: 1,
             },
         ]).exec();
-        // total de pacientes
         const totalRegisteredPatients = await Patient.find({}).count();
 
         const statisticsData = {
