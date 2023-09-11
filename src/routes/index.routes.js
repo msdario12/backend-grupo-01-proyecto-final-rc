@@ -8,18 +8,15 @@ const { turnsRouter } = require("./turns.routes");
 const { statisticsRouter } = require("./statistics.routes");
 const { authJwt } = require("../middlewares/authJwt.middlewares");
 
-// aca van todas las rutas para ser exportadas
 const router = Router();
 
-// rutas sin protección
 router.use("/weather", weatherRouter);
 router.use("/auth", authRouter);
-// rutas protegidas por jwt
+
 router.use("/turns", turnsRouter);
 router.use("/patients", authJwt, patientsRouter);
 router.use("/pets", authJwt, petsRouter);
 router.use("/statistics", authJwt, statisticsRouter);
 router.use("/users", authJwt, usersRouter);
 
-// exportación
 module.exports = { router };

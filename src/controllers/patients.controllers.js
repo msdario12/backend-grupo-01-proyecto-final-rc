@@ -27,7 +27,6 @@ const createNewPatient = async (req, res, next) => {
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    // Trabajar con los datos saneados del express validator
     const data = matchedData(req);
 
     try {
@@ -35,9 +34,7 @@ const createNewPatient = async (req, res, next) => {
         const foundedUser = await User.findOne({ email });
 
         if (foundedUser) {
-            // Existe usuario
 
-            // Creamos nueva mascota
             const newPet = await Pet.create({
                 name,
                 specie,
@@ -60,7 +57,6 @@ const createNewPatient = async (req, res, next) => {
             });
             return;
         }
-        // No existe el usuario
         const newUser = await User.create({ firstName, lastName, email, phone });
 
         const newPet = await Pet.create({
@@ -126,7 +122,7 @@ const getAllPatients = async (req, res, next) => {
             const allPatientsMulti = await Patient.find()
                 .populate({
                     path: "pet_id",
-                    match: { name: { $regex: searchParam, $options: "i" } }, // Búsqueda insensible a mayúsculas/minúsculas
+                    match: { name: { $regex: searchParam, $options: "i" } },
                 })
                 .populate({
                     path: "user_id",
@@ -140,7 +136,6 @@ const getAllPatients = async (req, res, next) => {
                 })
                 .exec();
 
-            // Filtrar solo los pacientes que tienen un pet o un user que coinciden con el searchTerm
             const filteredResults = allPatientsMulti.filter(
                 (patient) => patient.pet_id || patient.user_id,
             );
@@ -153,7 +148,6 @@ const getAllPatients = async (req, res, next) => {
                 return;
             }
 
-            // Obtener la información completa de las mascotas y usuarios populados
             const populatedResults = await Promise.all(
                 filteredResults.map(async (patient) => {
                     const foundPatient = await Patient.findById(patient._id)
@@ -186,7 +180,6 @@ const getAllPatients = async (req, res, next) => {
 const deletePatientByID = async (req, res, next) => {
     const { id } = req.params;
     try {
-        // Ver si el paciente tiene turnos
         const foundedTurn = await Turn.find({ patient_id: id });
         if (foundedTurn) {
             await Turn.deleteMany({ _id: [...foundedTurn.map((turn) => turn._id)] });

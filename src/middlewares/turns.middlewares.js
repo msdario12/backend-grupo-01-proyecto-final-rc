@@ -66,23 +66,6 @@ const newTurnValidator = () => {
             .withMessage("Fecha invalida"),
     );
 
-    // validatorList.push(
-    //   body("patient_id")
-    //     .trim()
-    //     .not()
-    //     .isEmpty()
-    //     .withMessage("patient_id es un campo obligatorio.")
-    //     .custom((value) => mongoose.isValidObjectId(value))
-    //     .withMessage("patient_id no es valido.")
-    //     .custom(async (value, { req }) => {
-    //       const patient = await Patient.findById(value);
-    //       if (!patient) {
-    //         throw new Error("patient_id invalido");
-    //       }
-    //       return true;
-    //     }),
-    // );
-
     validatorList.push(
         body("status")
             .trim()
@@ -143,7 +126,6 @@ const checkIfATurnWithSameDateExist = () => {
                 ],
             });
             if (foundedTurn) {
-                // El turno tiene exactamente la misma fecha de inicio
                 throw new Error("Ya existe un turno con la misma fecha");
             }
 
@@ -158,16 +140,12 @@ const checkIfDateIsNew = async (req, res, next) => {
         const { id } = req.params;
 
         const originalTurn = await Turn.findById(id);
-        // Vemos si se cambio la fecha
         if (turnData.date !== originalTurn.date) {
-            // Leemos el job existente para cambiar el estado
             const existingJob = scheduledJobs[String(id)];
             const newDate = new Date(turnData.date);
-            // Cambiamos la fecha de dicho job
             if (existingJob) {
                 existingJob.reschedule(newDate);
             }
-            // actualizamos la fecha del turno
             const endDate = addMinutes(newDate, 30);
             req.endDate = endDate.toISOString();
         }

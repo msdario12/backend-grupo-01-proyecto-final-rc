@@ -37,7 +37,6 @@ const handleLogin = async (req, res, next) => {
             foundedUser.password
         );
 
-        // Falta agregar la comparación con hash
         if (!isPasswordMatch) {
             res.status(200).json({
                 success: false,
@@ -45,7 +44,6 @@ const handleLogin = async (req, res, next) => {
             });
             return;
         }
-        // Solo usuarios con rol de administrador pueden loguear
         if (foundedUser.role !== 'admin') {
             res.status(200).json({
                 success: false,
@@ -53,7 +51,6 @@ const handleLogin = async (req, res, next) => {
             });
             return;
         }
-        // Creamos el JWT
         const accessToken = jwt.sign(
             {
                 firstName: foundedUser.firstName,
@@ -86,12 +83,10 @@ const handleSignUp = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        // Trabajar con los datos saneados del express validator
         const data = matchedData(req);
 
         const { email, password } = data;
 
-        // Validar si el email existe en la base de datos
         let user = await User.findOne({ email });
 
         if (user) {
@@ -102,10 +97,8 @@ const handleSignUp = async (req, res, next) => {
 
         user = new User(data);
 
-        // Hashear contraseña
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
-        // Store hash in your password DB.
         user.role = 'admin';
         await user.save();
         return res.status(201).json({ success: true, data: user });

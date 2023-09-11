@@ -53,7 +53,6 @@ const editUserByID = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        // Trabajar con los datos saneados del express validator
         const data = matchedData(req);
         const oneUser = await User.findOneAndUpdate({ _id: req.params.id }, data, {
             new: true,

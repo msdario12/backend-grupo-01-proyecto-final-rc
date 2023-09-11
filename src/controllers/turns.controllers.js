@@ -9,20 +9,15 @@ const { User } = require("../models/users.models");
 const { Pet } = require("../models/pets.models");
 
 const createTurnHelper = async (patientID, turnData) => {
-    // Creamos la fecha del turno media hora despues
     const endDate = addMinutes(new Date(turnData.date), 30);
     turnData.endDate = endDate;
     turnData.patient_id = patientID;
     const oneTurn = await Turn.create(turnData);
-    // Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
-    // En el front se debera setear el estado de inProgress cuando el paciente llegue.
     const dateJob = new Date(oneTurn.date);
 
-    // guardamos el turno en el paciente
     const onePatient = await Patient.findById(patientID)
         .populate("user_id")
         .populate("pet_id", "name");
-    // guardamos el job con el identificador igual al id del turno
     const turnID = String(oneTurn._id);
     const job = schedule.scheduleJob(turnID, dateJob, function() {
         try {
@@ -37,7 +32,6 @@ const createTurnHelper = async (patientID, turnData) => {
             next(error);
         }
     });
-    // agregamos el turno al paciente
     onePatient.turns.push(oneTurn._id);
     onePatient.save();
 };
@@ -50,7 +44,6 @@ const editTurn = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        // Trabajar con los datos saneados del express validator
         const turnData = matchedData(req);
         turnData.endDate = req.endDate;
 
@@ -81,23 +74,15 @@ const createTurn = async (req, res, next) => {
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
         }
-        // Trabajar con los datos saneados del express validator
         const turnData = matchedData(req);
-        // Creamos la fecha del turno media hora despues
         const endDate = addMinutes(new Date(turnData.date), 30);
         turnData.endDate = endDate;
         const oneTurn = await Turn.create(turnData);
-        // Creamos una tarea a ejecutarse la fecha del turno, pasa a esperando paciente
-        // En el front se debera setear el estado de inProgress cuando el paciente llegue.
         const date = new Date(oneTurn.date);
 
-        // guardamos el turno en el paciente
         const onePatient = await Patient.findById(oneTurn.patient_id)
             .populate("user_id")
             .populate("pet_id", "name");
-        // el patient_id se valida en el middleware de express-validator
-        // podemos afirmar que si existe un onePatient con ese id
-        // guardamos el job con el identificador igual al id del turno
         const turnID = String(oneTurn._id);
         const job = schedule.scheduleJob(turnID, date, function() {
             try {
@@ -112,7 +97,6 @@ const createTurn = async (req, res, next) => {
                 next(error);
             }
         });
-        // agregamos el turno al paciente
         onePatient.turns.push(oneTurn._id);
         onePatient.save();
         return res.status(201).json({
@@ -210,9 +194,7 @@ const deleteTurnById = async (req, res, next) => {
             });
             return;
         }
-        // Leemos el job existente para cambiar el estado
         const existingJob = schedule.scheduledJobs[deletedTurn._id];
-        // Cancelamos dicho job
         if (existingJob) {
             existingJob.cancel();
         }
